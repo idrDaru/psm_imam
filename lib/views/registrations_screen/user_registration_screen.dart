@@ -1,11 +1,15 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
 import 'package:psm_imam/views/login_screen/login_screen.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:psm_imam/services/networking.dart';
 
 class UserRegistrationScreen extends StatefulWidget {
   static String id = 'user_registration_screen';
@@ -17,6 +21,34 @@ class UserRegistrationScreen extends StatefulWidget {
 
 class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   bool isChecked = false;
+  String firstName = '',
+      lastName = '',
+      email = '',
+      password = '',
+      confirmPassword = '';
+
+  submitForm() async {
+    Map<String, String> data = {
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'password': password,
+    };
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+    };
+
+    NetworkHelper networkHelper =
+        NetworkHelper(endpoint: '/api/register/', header: header, body: data);
+    var response = await networkHelper.postData();
+    var decodeResponse = jsonDecode(response.body);
+    if (decodeResponse['status'] == 201) {
+      Navigator.pushNamed(context, LoginScreen.id);
+    } else {
+      print(decodeResponse['message']);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,11 +82,21 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                     const SizedBox(height: 8.0),
                     SubmitButton(title: 'Upload', onPressed: () {}),
                     const SizedBox(height: 50.0),
-                    const ShadowTextField(title: 'First Name'),
-                    const ShadowTextField(title: 'Last Name'),
-                    const ShadowTextField(title: 'Email Address'),
-                    const ShadowTextField(title: 'Password'),
-                    const ShadowTextField(title: 'Confirm Passowrd'),
+                    ShadowTextField((value) {
+                      return firstName = value;
+                    }, title: 'First Name'),
+                    ShadowTextField((value) {
+                      return lastName = value;
+                    }, title: 'Last Name'),
+                    ShadowTextField((value) {
+                      return email = value;
+                    }, title: 'Email Address'),
+                    ShadowTextField((value) {
+                      return password = value;
+                    }, title: 'Password'),
+                    ShadowTextField((value) {
+                      return confirmPassword = value;
+                    }, title: 'Confirm Passowrd'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,7 +150,9 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                     const SizedBox(height: 20.0),
                     SubmitButton(
                       title: 'Sign Up',
-                      onPressed: () {},
+                      onPressed: () {
+                        submitForm();
+                      },
                     ),
                     const SizedBox(height: 20.0),
                     Row(

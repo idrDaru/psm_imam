@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/views/home_screen/home_screen.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
+import 'package:psm_imam/services/networking.dart';
 
 class LoginScreen extends StatefulWidget {
   static String id = 'login_screen';
@@ -15,6 +18,29 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isChecked = false;
+  String email = '', password = '';
+
+  submitForm() async {
+    Map<String, String> data = {
+      'email': email,
+      'password': password,
+    };
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(endpoint: '/api/login/', header: header, body: data);
+    var response = await networkHelper.postData();
+    var decodeResponse = jsonDecode(response.body);
+    if (decodeResponse['status'] == 200) {
+      print(decodeResponse['data']['access_token']);
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, HomeScreen.id);
+    } else {
+      print(decodeResponse['message']);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const ShadowTextField(title: 'Email Address'),
-                    const ShadowTextField(title: 'Password'),
+                    ShadowTextField((value) {
+                      return email = value;
+                    }, title: 'Email Address'),
+                    ShadowTextField((value) {
+                      return password = value;
+                    }, title: 'Password'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,7 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SubmitButton(
                       title: "Login",
-                      onPressed: () {},
+                      onPressed: () {
+                        submitForm();
+                      },
                     ),
                     const SizedBox(
                       height: 20.0,

@@ -5,6 +5,8 @@ import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
 import 'package:psm_imam/views/login_screen/login_screen.dart';
+import 'package:psm_imam/services/networking.dart';
+import 'dart:convert';
 
 class ProviderRegistrationScreen extends StatefulWidget {
   static String id = 'provider_registration_screen';
@@ -18,6 +20,44 @@ class ProviderRegistrationScreen extends StatefulWidget {
 class _ProviderRegistrationScreenState
     extends State<ProviderRegistrationScreen> {
   bool isChecked = false;
+  String name = '',
+      addressLineOne = '',
+      addressLineTwo = '',
+      city = '',
+      stateProvince = '',
+      country = '',
+      postalCode = '',
+      email = '',
+      password = '',
+      confirmPassword = '';
+
+  submitForm() async {
+    Map<String, String> data = {
+      'email': email,
+      'password': password,
+      'name': name,
+      'address_line_one': addressLineOne,
+      'address_line_two': addressLineTwo,
+      'city': city,
+      'state_province': stateProvince,
+      'country': country,
+      'postal_code': postalCode,
+      'type': '2',
+    };
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(endpoint: '/api/register/', header: header, body: data);
+    var response = await networkHelper.postData();
+    var decodeResponse = jsonDecode(response.body);
+    if (response.statusCode == 201) {
+      Navigator.pushNamed(context, LoginScreen.id);
+    } else {
+      print(decodeResponse['message']);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,16 +91,36 @@ class _ProviderRegistrationScreenState
                     const SizedBox(height: 8.0),
                     SubmitButton(title: 'Upload', onPressed: () {}),
                     const SizedBox(height: 50.0),
-                    const ShadowTextField(title: 'Company Name'),
-                    const ShadowTextField(title: 'Address (Line 1)'),
-                    const ShadowTextField(title: 'Address (Line 2) - Optional'),
-                    const ShadowTextField(title: 'City'),
-                    const ShadowTextField(title: 'Province/State'),
-                    const ShadowTextField(title: 'Country'),
-                    const ShadowTextField(title: 'Postal Code'),
-                    const ShadowTextField(title: 'Email Address'),
-                    const ShadowTextField(title: 'Password'),
-                    const ShadowTextField(title: 'Confirm Password'),
+                    ShadowTextField((value) {
+                      return name = value;
+                    }, title: 'Company Name'),
+                    ShadowTextField((value) {
+                      return addressLineOne = value;
+                    }, title: 'Address (Line 1)'),
+                    ShadowTextField((value) {
+                      return addressLineTwo = value;
+                    }, title: 'Address (Line 2) - Optional'),
+                    ShadowTextField((value) {
+                      return city = value;
+                    }, title: 'City'),
+                    ShadowTextField((value) {
+                      return stateProvince = value;
+                    }, title: 'Province/State'),
+                    ShadowTextField((value) {
+                      return country = value;
+                    }, title: 'Country'),
+                    ShadowTextField((value) {
+                      return postalCode = value;
+                    }, title: 'Postal Code'),
+                    ShadowTextField((value) {
+                      return email = value;
+                    }, title: 'Email Address'),
+                    ShadowTextField((value) {
+                      return password = value;
+                    }, title: 'Password'),
+                    ShadowTextField((value) {
+                      return confirmPassword = value;
+                    }, title: 'Confirm Password'),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,7 +174,9 @@ class _ProviderRegistrationScreenState
                     const SizedBox(height: 20.0),
                     SubmitButton(
                       title: 'Sign Up',
-                      onPressed: () {},
+                      onPressed: () {
+                        submitForm();
+                      },
                     ),
                     const SizedBox(height: 20.0),
                     Row(

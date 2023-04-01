@@ -15,6 +15,7 @@ class AddParkingSpaceScreen extends StatefulWidget {
 
 class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
   bool isChecked = false;
+  String car_spot_price = '', motorcycle_spot_price = '';
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +39,13 @@ class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ShadowTextField(title: 'Parking Space Name'),
-                    const ShadowTextField(title: 'Address (Line 1)'),
-                    const ShadowTextField(title: 'Address (Line 2) - Optional'),
-                    const ShadowTextField(title: 'City'),
-                    const ShadowTextField(title: 'Province/State'),
-                    const ShadowTextField(title: 'Country'),
-                    const ShadowTextField(title: 'Postal Code'),
+                    // const ShadowTextField(title: 'Parking Space Name'),
+                    // const ShadowTextField(title: 'Address (Line 1)'),
+                    // const ShadowTextField(title: 'Address (Line 2) - Optional'),
+                    // const ShadowTextField(title: 'City'),
+                    // const ShadowTextField(title: 'Province/State'),
+                    // const ShadowTextField(title: 'Country'),
+                    // const ShadowTextField(title: 'Postal Code'),
                     const Text('Photo of Parking Space:'),
                     const Text(
                       '** Make sure developer can see your parking layout',
@@ -73,13 +74,17 @@ class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    const ShadowTextField(title: 'RM  | '),
+                    ShadowTextField((value) {
+                      return motorcycle_spot_price = value;
+                    }, title: 'RM  | '),
                     const Text(
                       'Car spot price (optional)',
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    const ShadowTextField(title: 'RM  | '),
+                    ShadowTextField((value) {
+                      return car_spot_price = value;
+                    }, title: 'RM  | '),
                     const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

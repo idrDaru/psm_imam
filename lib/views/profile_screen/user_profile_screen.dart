@@ -1,13 +1,56 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart';
+import 'package:psm_imam/services/networking.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
 import 'package:psm_imam/views/edit_profile_screen/user_edit_profile_screen.dart';
 import 'package:psm_imam/views/profile_screen/components/profile_header.dart';
 import 'package:psm_imam/views/profile_screen/components/profile_scrolled_row.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   static String id = 'user_profile_screen';
   const UserProfileScreen({super.key});
+
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  String firstName = '', lastName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData();
+  }
+
+  void getUserData() async {
+    await dotenv.load(fileName: ".env");
+
+    Map<String, String> body = {};
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + dotenv.env['ACCESS_TOKEN'].toString(),
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(endpoint: '/api/user/', header: header);
+
+    var response = await networkHelper.getData();
+    var decodeResponse = jsonDecode(response.body);
+    
+    if (decodeResponse['status'] == 200) {
+      setState(() {
+        firstName = decodeResponse['data']['first_name'];
+        lastName = decodeResponse['data']['last_name'];
+      });
+    } else {
+      print(decodeResponse['message']);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +91,7 @@ class UserProfileScreen extends StatelessWidget {
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           CircleAvatar(
                             radius: 50.0,
                             backgroundImage: NetworkImage(
@@ -58,7 +101,7 @@ class UserProfileScreen extends StatelessWidget {
                           SizedBox(width: 20.0),
                           Flexible(
                             child: Text(
-                              'Imam Daru Rismi',
+                              '$firstName $lastName',
                               style: kTitleTextStyle,
                             ),
                           ),

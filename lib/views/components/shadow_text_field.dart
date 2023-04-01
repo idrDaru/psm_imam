@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 
-class ShadowTextField extends StatelessWidget {
-  const ShadowTextField({
+typedef StringValue = String Function(String);
+
+class ShadowTextField extends StatefulWidget {
+  ShadowTextField(
+    this.callback, {
     super.key,
     required this.title,
   });
 
   final String title;
+  late StringValue callback;
+
+  @override
+  State<ShadowTextField> createState() => _ShadowTextFieldState();
+}
+
+class _ShadowTextFieldState extends State<ShadowTextField> {
+  TextEditingController textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +35,13 @@ class ShadowTextField extends StatelessWidget {
             ],
           ),
           child: TextField(
-            onChanged: (value) {},
+            controller: textController,
+            onChanged: (value) {
+              // widget.callback(textController.text);
+              widget.callback(value);
+            },
             decoration: kTextFieldDecoration.copyWith(
-              hintText: title,
+              hintText: widget.title,
             ),
             keyboardType: TextInputType.emailAddress,
           ),

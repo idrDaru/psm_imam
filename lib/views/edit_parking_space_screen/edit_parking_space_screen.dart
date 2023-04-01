@@ -14,6 +14,7 @@ class EditParkingSpaceScreen extends StatefulWidget {
 
 class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
   bool isChecked = false;
+  String car_spot_price = '', motorcycle_spot_price = '';
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +38,13 @@ class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ShadowTextField(title: 'Fakulti Alam Bina dan Ukur'),
-                    const ShadowTextField(title: 'Fakulti Alam Bina dan Ukur,'),
-                    const ShadowTextField(title: 'Lingkaran Ilmu, UTM'),
-                    const ShadowTextField(title: 'Johor Bahru'),
-                    const ShadowTextField(title: 'Johor'),
-                    const ShadowTextField(title: 'Malaysia'),
-                    const ShadowTextField(title: '81310'),
+                    // const ShadowTextField(title: 'Fakulti Alam Bina dan Ukur'),
+                    // const ShadowTextField(title: 'Fakulti Alam Bina dan Ukur,'),
+                    // const ShadowTextField(title: 'Lingkaran Ilmu, UTM'),
+                    // const ShadowTextField(title: 'Johor Bahru'),
+                    // const ShadowTextField(title: 'Johor'),
+                    // const ShadowTextField(title: 'Malaysia'),
+                    // const ShadowTextField(title: '81310'),
                     const Text('Photo of Parking Space:'),
                     const Text(
                       '** Make sure developer can see your parking layout',
@@ -103,13 +104,17 @@ class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    const ShadowTextField(title: 'RM  | 0.50'),
+                    ShadowTextField((value) {
+                      return motorcycle_spot_price = value;
+                    }, title: 'RM  | 0.50'),
                     const Text(
                       'Car spot price (optional)',
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    const ShadowTextField(title: 'RM  | 1.00'),
+                    ShadowTextField((value) {
+                      return car_spot_price = value;
+                    }, title: 'RM  | 1.00'),
                     const SizedBox(height: 20.0),
                     Center(
                       child: SubmitButton(

@@ -43,27 +43,27 @@ class PaymentFormScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 50.0),
-              const ShadowTextField(
-                title: 'Card Name',
-              ),
-              const ShadowTextField(
-                title: 'Credit Card Number',
-              ),
-              Row(
-                children: const [
-                  Expanded(
-                    child: ShadowTextField(
-                      title: 'Expires',
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  Expanded(
-                    child: ShadowTextField(
-                      title: 'CVV',
-                    ),
-                  ),
-                ],
-              ),
+              // const ShadowTextField(
+              //   title: 'Card Name',
+              // ),
+              // const ShadowTextField(
+              //   title: 'Credit Card Number',
+              // ),
+              // Row(
+              //   children: const [
+              //     Expanded(
+              //       child: ShadowTextField(
+              //         title: 'Expires',
+              //       ),
+              //     ),
+              //     SizedBox(width: 10.0),
+              //     Expanded(
+              //       child: ShadowTextField(
+              //         title: 'CVV',
+              //       ),
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 50.0),
               const Center(
                 child: Text(
