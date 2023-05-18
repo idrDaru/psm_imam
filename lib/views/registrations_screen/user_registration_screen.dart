@@ -5,7 +5,7 @@ import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
-import 'package:psm_imam/views/login_screen/login_screen.dart';
+import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
-import 'package:psm_imam/views/home_screen/home_screen.dart';
+import 'package:psm_imam/views/home_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
 import 'package:psm_imam/services/networking.dart';
 
@@ -21,6 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = '', password = '';
 
   submitForm() async {
+    final storage = new FlutterSecureStorage();
+
     Map<String, String> data = {
       'email': email,
       'password': password,
@@ -30,11 +33,19 @@ class _LoginScreenState extends State<LoginScreen> {
       'Content-Type': 'application/json',
     };
 
-    NetworkHelper networkHelper = NetworkHelper(endpoint: '/api/login/', header: header, body: data);
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/login/',
+      header: header,
+      body: data,
+    );
     var response = await networkHelper.postData();
     var decodeResponse = jsonDecode(response.body);
     if (decodeResponse['status'] == 200) {
-      print(decodeResponse['data']['access_token']);
+      await storage.write(
+        key: 'access_token',
+        value: decodeResponse['data']['access_token'],
+      );
+
       // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, HomeScreen.id);
     } else {

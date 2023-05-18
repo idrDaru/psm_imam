@@ -3,7 +3,7 @@ import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
-import 'package:psm_imam/views/edit_booking_screen/components/time_drop_down.dart';
+import 'package:psm_imam/views/components/time_drop_down.dart';
 
 class EditBookingScreen extends StatefulWidget {
   static String id = 'edit_booking_screen';
@@ -32,6 +32,7 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                 AppBar(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
+                  elevation: 0,
                   leading: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();

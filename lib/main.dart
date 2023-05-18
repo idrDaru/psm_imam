@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/add_parking_space_screen/add_parking_space_screen.dart';
-import 'package:psm_imam/views/edit_booking_screen/edit_booking_screen.dart';
-import 'package:psm_imam/views/edit_parking_space_screen/edit_parking_space_screen.dart';
-import 'package:psm_imam/views/edit_profile_screen/provider_edit_profile_screen.dart';
-import 'package:psm_imam/views/edit_profile_screen/user_edit_profile_screen.dart';
-import 'package:psm_imam/views/home_screen/home_screen.dart';
-import 'package:psm_imam/views/login_screen/login_screen.dart';
-import 'package:psm_imam/views/manage_booking_screen/manage_booking_screen.dart';
-import 'package:psm_imam/views/manage_parking_space_screen/manage_parking_space_screen.dart';
-import 'package:psm_imam/views/payment_form_screen/payment_form_screen.dart';
-import 'package:psm_imam/views/payment_method_screen/payment_method_screen.dart';
-import 'package:psm_imam/views/profile_screen/provider_profile_screen.dart';
-import 'package:psm_imam/views/profile_screen/user_profile_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/views/add_parking_space_screen/index.dart';
+import 'package:psm_imam/views/edit_booking_screen/index.dart';
+import 'package:psm_imam/views/edit_parking_space_screen/index.dart';
+import 'package:psm_imam/views/edit_profile_screen/index.dart';
+import 'package:psm_imam/views/home_screen/index.dart';
+import 'package:psm_imam/views/login_screen/index.dart';
+import 'package:psm_imam/views/manage_booking_screen/index.dart';
+import 'package:psm_imam/views/manage_parking_space_screen/index.dart';
+import 'package:psm_imam/views/payment_form_screen/index.dart';
+import 'package:psm_imam/views/payment_method_screen/index.dart';
+import 'package:psm_imam/views/profile_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
 
@@ -45,14 +45,17 @@ class MyApp extends StatelessWidget {
             const ManageParkingSpaceScreen(),
 
         // ACCOUNT MANAGEMENT ROUTES
-        UserProfileScreen.id: (context) => const UserProfileScreen(),
-        ProviderProfileScreen.id: (context) => const ProviderProfileScreen(),
-        UserEditProfileScreen.id: (context) => const UserEditProfileScreen(),
-        ProviderEditProfileScreen.id: (context) =>
-            const ProviderEditProfileScreen(),
+        ProfileScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+              child: const ProfileScreen(),
+            ),
+        EditProfileScreen.id: (context) => const EditProfileScreen(),
 
         // MANAGE BOOKING SCREEN
-        ManageBookingScreen.id: (context) => const ManageBookingScreen(),
+        ManageBookingScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+              child: const ManageBookingScreen(),
+            ),
         EditBookingScreen.id: (context) => const EditBookingScreen(),
 
         // PAYMENT SCREEN
@@ -60,7 +63,10 @@ class MyApp extends StatelessWidget {
         PaymentMethodScreen.id: (context) => const PaymentMethodScreen(),
 
         // HOME SCREEN
-        HomeScreen.id: (context) => const HomeScreen(),
+        HomeScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+              child: const HomeScreen(),
+            ),
       },
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/submit_button.dart';
-import 'package:psm_imam/views/payment_form_screen/payment_form_screen.dart';
+import 'package:psm_imam/views/payment_form_screen/index.dart';
 
 class PaymentMethodScreen extends StatelessWidget {
   static String id = 'payment_method_screen';
@@ -14,6 +14,7 @@ class PaymentMethodScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
@@ -52,9 +53,8 @@ class PaymentMethodScreen extends StatelessWidget {
                 onPressed: () {},
                 style: const ButtonStyle(
                   backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
-                  shadowColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
+                      MaterialStatePropertyAll<Color>(Colors.white),
+                  shadowColor: MaterialStatePropertyAll<Color>(Colors.white),
                   padding: MaterialStatePropertyAll<EdgeInsets>(
                     EdgeInsets.all(0),
                   ),
@@ -111,9 +111,8 @@ class PaymentMethodScreen extends StatelessWidget {
                 onPressed: () {},
                 style: const ButtonStyle(
                   backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
-                  shadowColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
+                      MaterialStatePropertyAll<Color>(Colors.white),
+                  shadowColor: MaterialStatePropertyAll<Color>(Colors.white),
                   padding: MaterialStatePropertyAll<EdgeInsets>(
                     EdgeInsets.all(0),
                   ),
@@ -168,9 +167,8 @@ class PaymentMethodScreen extends StatelessWidget {
               ElevatedButton(
                 style: const ButtonStyle(
                   backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
-                  shadowColor:
-                      MaterialStatePropertyAll<Color>(Colors.transparent),
+                      MaterialStatePropertyAll<Color>(Colors.white),
+                  shadowColor: MaterialStatePropertyAll<Color>(Colors.white),
                   padding: MaterialStatePropertyAll<EdgeInsets>(
                     EdgeInsets.all(0),
                   ),
@@ -205,10 +203,12 @@ class PaymentMethodScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'rismi@graduate.utm.my',
-                              style: kTextStyle.copyWith(
-                                fontSize: 20.0,
+                            Flexible(
+                              child: Text(
+                                'utm@utm.my',
+                                style: kTextStyle.copyWith(
+                                  fontSize: 20.0,
+                                ),
                               ),
                             ),
                           ],

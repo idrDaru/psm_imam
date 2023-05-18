@@ -3,6 +3,7 @@ import 'constants.dart';
 
 typedef StringValue = String Function(String);
 
+// ignore: must_be_immutable
 class ShadowTextField extends StatefulWidget {
   ShadowTextField(
     this.callback, {
@@ -11,7 +12,7 @@ class ShadowTextField extends StatefulWidget {
   });
 
   final String title;
-  late StringValue callback;
+  late Function callback;
 
   @override
   State<ShadowTextField> createState() => _ShadowTextFieldState();
@@ -37,7 +38,6 @@ class _ShadowTextFieldState extends State<ShadowTextField> {
           child: TextField(
             controller: textController,
             onChanged: (value) {
-              // widget.callback(textController.text);
               widget.callback(value);
             },
             decoration: kTextFieldDecoration.copyWith(

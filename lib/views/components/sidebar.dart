@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:psm_imam/models/parking_user.dart';
+import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/home_screen/home_screen.dart';
-import 'package:psm_imam/views/manage_booking_screen/manage_booking_screen.dart';
-import 'package:psm_imam/views/profile_screen/user_profile_screen.dart';
+import 'package:psm_imam/views/home_screen/index.dart';
+import 'package:psm_imam/views/login_screen/index.dart';
+import 'package:psm_imam/views/manage_booking_screen/index.dart';
+import 'package:psm_imam/views/profile_screen/index.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NavigationDrawer();
+    return Consumer<UserProvider>(builder: (context, value, child) {
+      return NavigationDrawer();
+    });
   }
 }
 
@@ -24,7 +30,9 @@ class NavigationDrawer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             buildHeader(context),
-            buildMenuItems(context),
+            Consumer(builder: (context, value, child) {
+              return buildMenuItems(context);
+            })
           ],
         ),
       ),
@@ -56,14 +64,23 @@ Widget buildMenuItems(BuildContext context) {
               'https://cdn-icons-png.flaticon.com/512/194/194938.png',
             ),
           ),
-          title: Flexible(
-            child: Text(
-              'Universiti Teknologi Malaysia',
-              style: kTextStyle.copyWith(
-                color: kPrimaryColor,
-              ),
-            ),
-          ),
+          title: Flexible(child: Consumer<UserProvider>(
+            builder: (context, value, child) {
+              if (value.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return Text(
+                value.user is ParkingUser
+                    ? value.user.firstName + " " + value.user.lastName
+                    : value.user.name,
+                style: kTextStyle.copyWith(
+                  color: kPrimaryColor,
+                ),
+              );
+            },
+          )),
           enabled: false,
         ),
         const Divider(color: kSecondaryColor),
@@ -79,7 +96,7 @@ Widget buildMenuItems(BuildContext context) {
           leading: const Icon(Icons.account_circle_outlined),
           title: Text('Profile'),
           onTap: () {
-            Navigator.pushNamed(context, UserProfileScreen.id);
+            Navigator.pushNamed(context, ProfileScreen.id);
           },
         ),
         const Divider(color: kSecondaryColor),
@@ -95,7 +112,9 @@ Widget buildMenuItems(BuildContext context) {
         ListTile(
           leading: const Icon(Icons.logout_outlined),
           title: Text('Logout'),
-          onTap: () {},
+          onTap: () {
+            Navigator.pushNamed(context, LoginScreen.id);
+          },
         ),
       ],
     ),

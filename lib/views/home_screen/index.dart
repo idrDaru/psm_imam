@@ -1,11 +1,44 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:provider/provider.dart';
+import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static String id = 'home_screen';
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final Completer<GoogleMapController> controller = Completer();
+
+  static const LatLng sourceLocation = LatLng(1.572818, 103.620371);
+  LocationData? currentLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<UserProvider>(context, listen: false).getUserData();
+    });
+    getCurrentLocation();
+  }
+
+  void getCurrentLocation() {
+    Location location = Location();
+    location.getLocation().then((value) {
+      setState(() {
+        currentLocation = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +49,38 @@ class HomeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
+        elevation: 0,
       ),
-      drawer: const Sidebar(),
+      drawer: Consumer<UserProvider>(builder: (context, value, child) {
+        return const Sidebar();
+      }),
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          Container(
-            color: kSecondaryColor,
-          ),
+          currentLocation == null
+              ? Center(
+                  child: Text("LOADING"),
+                )
+              : GoogleMap(
+                  compassEnabled: false,
+                  zoomControlsEnabled: false,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      currentLocation!.latitude!,
+                      currentLocation!.longitude!,
+                    ),
+                    zoom: 14.5,
+                  ),
+                  markers: {
+                    Marker(
+                      markerId: MarkerId("source"),
+                      position: LatLng(
+                        currentLocation!.latitude!,
+                        currentLocation!.longitude!,
+                      ),
+                    ),
+                  },
+                ),
           Padding(
             padding: const EdgeInsets.only(
               bottom: 20.0,

@@ -1,25 +1,39 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/header.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
-import 'package:psm_imam/views/edit_booking_screen/edit_booking_screen.dart';
-import 'package:psm_imam/views/payment_method_screen/payment_method_screen.dart';
+import 'package:psm_imam/views/edit_booking_screen/index.dart';
+import 'package:psm_imam/views/payment_method_screen/index.dart';
 
-class ManageBookingScreen extends StatelessWidget {
+class ManageBookingScreen extends StatefulWidget {
   static String id = 'manage_booking_screen';
   const ManageBookingScreen({super.key});
+
+  @override
+  State<ManageBookingScreen> createState() => _ManageBookingScreenState();
+}
+
+class _ManageBookingScreenState extends State<ManageBookingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<UserProvider>(context, listen: false).getUserData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(color: kPrimaryColor),
+        iconTheme: const IconThemeData(color: kPrimaryColor),
         backgroundColor: Colors.transparent,
-        shadowColor: Colors.transparent,
+        elevation: 0,
       ),
-      drawer: Sidebar(),
+      drawer: const Sidebar(),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -37,7 +51,7 @@ class ManageBookingScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 5.0),
-                    height: 300.0,
+                    height: 340.0,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(
                         Radius.circular(10.0),
@@ -68,7 +82,7 @@ class ManageBookingScreen extends StatelessWidget {
                                         ),
                                       ),
                                       child: const CircleAvatar(
-                                        radius: 50.0,
+                                        radius: 40.0,
                                         backgroundImage: NetworkImage(
                                           'https://cdn-icons-png.flaticon.com/512/194/194938.png',
                                         ),
@@ -86,7 +100,7 @@ class ManageBookingScreen extends StatelessWidget {
                                       child: Text(
                                         'Parking Layout',
                                         style:
-                                            kTextStyle.copyWith(fontSize: 12.0),
+                                            kTextStyle.copyWith(fontSize: 10.0),
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
@@ -102,7 +116,7 @@ class ManageBookingScreen extends StatelessWidget {
                                       child: Text(
                                         'Parking Location',
                                         style:
-                                            kTextStyle.copyWith(fontSize: 11.0),
+                                            kTextStyle.copyWith(fontSize: 10.0),
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
@@ -125,7 +139,7 @@ class ManageBookingScreen extends StatelessWidget {
                                     Text(
                                       'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310 Johor Bahru, Johor, Malaysia',
                                       style: kTextStyle.copyWith(
-                                        fontSize: 12.0,
+                                        fontSize: 11.0,
                                       ),
                                       textAlign: TextAlign.justify,
                                     ),
@@ -150,21 +164,21 @@ class ManageBookingScreen extends StatelessWidget {
                                             Text(
                                               'Car Space : 1',
                                               style: kTextStyle.copyWith(
-                                                fontSize: 12.0,
+                                                fontSize: 11.0,
                                               ),
                                             ),
                                             const SizedBox(height: 5.0),
                                             Text(
                                               'Motorcycle Space : 0',
                                               style: kTextStyle.copyWith(
-                                                fontSize: 12.0,
+                                                fontSize: 11.0,
                                               ),
                                             ),
                                             const SizedBox(height: 5.0),
                                             Text(
                                               'Parking Layout : 87',
                                               style: kTextStyle.copyWith(
-                                                fontSize: 12.0,
+                                                fontSize: 11.0,
                                               ),
                                             ),
                                             const SizedBox(height: 5.0),
@@ -173,8 +187,8 @@ class ManageBookingScreen extends StatelessWidget {
                                         Text(
                                           'Total Price : RM 1',
                                           style: kTextStyle.copyWith(
-                                            color: kPrimaryColor,
-                                          ),
+                                              color: kPrimaryColor,
+                                              fontSize: 11.0),
                                         ),
                                       ],
                                     ),

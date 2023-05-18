@@ -104,17 +104,17 @@ class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    ShadowTextField((value) {
-                      return motorcycle_spot_price = value;
-                    }, title: 'RM  | 0.50'),
+                    // ShadowTextField((value) {
+                    //   return motorcycle_spot_price = value;
+                    // }, title: 'RM  | 0.50'),
                     const Text(
                       'Car spot price (optional)',
                       style: kTextStyle,
                     ),
                     const SizedBox(height: 5.0),
-                    ShadowTextField((value) {
-                      return car_spot_price = value;
-                    }, title: 'RM  | 1.00'),
+                    // ShadowTextField((value) {
+                    //   return car_spot_price = value;
+                    // }, title: 'RM  | 1.00'),
                     const SizedBox(height: 20.0),
                     Center(
                       child: SubmitButton(
