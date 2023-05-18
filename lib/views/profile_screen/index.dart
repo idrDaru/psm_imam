@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/models/parking_provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/services/networking.dart';
 import 'package:psm_imam/view_models/user.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/custom_scaffold.dart';
@@ -17,6 +20,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Map<String, List> profileData = {};
+
   @override
   void initState() {
     super.initState();
@@ -25,195 +30,223 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  getProfileData() async {
+    const storage = FlutterSecureStorage();
+    String? key = await storage.read(key: 'access_token');
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $key',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(endpoint: '', header: header);
+  }
+
+  List<Widget> parkingProviderScrolledRow() {
+    return [
+      ProfileScrolledRow(title: 'My Parking Space'),
+      ProfileScrolledRow(title: 'Deactivate Parking Spaces'),
+    ];
+  }
+
+  List<Widget> parkingUserScrolledRow() {
+    return [
+      ProfileScrolledRow(title: 'My Upcoming Parking'),
+      ProfileScrolledRow(title: 'My Voucher'),
+      ProfileScrolledRow(title: 'My Parking History'),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: Consumer<UserProvider>(builder: (context, value, child) {
-        return const Sidebar();
-      }),
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: kPrimaryColor),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.only(top: 0),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          Stack(
-            children: [
-              const ProfileHeader(),
-              Padding(
-                padding: const EdgeInsets.only(
-                  right: 20,
-                  left: 20,
-                  top: 50,
-                  bottom: 20,
-                ),
-                child: Column(
-                  children: [
-                    Center(child: Consumer<UserProvider>(
-                      builder: (context, value, child) {
-                        if (value.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        drawer: Consumer<UserProvider>(builder: (context, value, child) {
+          return const Sidebar();
+        }),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: kPrimaryColor),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.only(top: 0),
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Stack(
+              children: [
+                const ProfileHeader(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    right: 20,
+                    left: 20,
+                    top: 50,
+                    bottom: 20,
+                  ),
+                  child: Column(
+                    children: [
+                      Center(child: Consumer<UserProvider>(
+                        builder: (context, value, child) {
+                          if (value.isLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return Text(
+                            value.user is ParkingUser ? "PROFILE" : "PROVIDER",
+                            style: kTitleTextStyle,
                           );
-                        }
-                        return Text(
-                          value.user is ParkingUser ? "PROFILE" : "PROVIDER",
-                          style: kTitleTextStyle,
-                        );
-                      },
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                        vertical: 30.0,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const CircleAvatar(
-                            radius: 50.0,
-                            backgroundImage: NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/194/194938.png',
-                            ),
-                          ),
-                          const SizedBox(width: 20.0),
-                          Flexible(
-                            child: Consumer<UserProvider>(
+                        },
+                      )),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 30.0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Consumer<UserProvider>(
                                 builder: (context, value, child) {
                               if (value.isLoading) {
                                 return const Center(
                                   child: CircularProgressIndicator(),
                                 );
                               }
-                              return Text(
-                                value.user is ParkingUser
-                                    ? '${value.user.firstName} ${value.user.lastName}'
-                                    : '${value.user.name}',
-                                style: kTitleTextStyle,
+                              return CircleAvatar(
+                                radius: 50.0,
+                                backgroundImage: NetworkImage(
+                                  value.user.user.imageDownloadURL,
+                                ),
                               );
                             }),
+                            const SizedBox(width: 20.0),
+                            Flexible(
+                              child: Consumer<UserProvider>(
+                                  builder: (context, value, child) {
+                                if (value.isLoading) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return Text(
+                                  value.user is ParkingUser
+                                      ? '${value.user.firstName} ${value.user.lastName}'
+                                      : '${value.user.name}',
+                                  style: kTitleTextStyle,
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                '2',
+                                style: kTitleTextStyle.copyWith(
+                                  color: kPrimaryColor,
+                                ),
+                              ),
+                              Consumer<UserProvider>(
+                                  builder: (context, value, child) {
+                                if (value.isLoading) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return Text(
+                                  value.user is ParkingUser
+                                      ? 'Waiting for Payment'
+                                      : 'Parking Spaces',
+                                  style: kTextStyle.copyWith(fontSize: 12.0),
+                                );
+                              }),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '6',
+                                style: kTitleTextStyle.copyWith(
+                                  color: kPrimaryColor,
+                                ),
+                              ),
+                              Consumer<UserProvider>(
+                                  builder: (context, value, child) {
+                                if (value.isLoading) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return Text(
+                                  value.user is ParkingUser
+                                      ? 'Upcoming Parking'
+                                      : 'Deactivated',
+                                  style: kTextStyle.copyWith(fontSize: 12.0),
+                                );
+                              })
+                            ],
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                EditProfileScreen.id,
+                                arguments: Provider.of<UserProvider>(
+                                  context,
+                                  listen: false,
+                                ).user,
+                              );
+                            },
+                            style: kSendButtonStyle.copyWith(
+                              padding: const MaterialStatePropertyAll<
+                                  EdgeInsetsGeometry>(
+                                EdgeInsets.symmetric(
+                                  vertical: 10.0,
+                                  horizontal: 25.0,
+                                ),
+                              ),
+                            ),
+                            child: const Text('Edit Profile'),
                           ),
                         ],
                       ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: height / 2.3),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              '2',
-                              style: kTitleTextStyle.copyWith(
-                                color: kPrimaryColor,
-                              ),
-                            ),
-                            Consumer<UserProvider>(
-                                builder: (context, value, child) {
-                              if (value.isLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return Text(
-                                value.user is ParkingUser
-                                    ? 'Waiting for Payment'
-                                    : 'Parking Spaces',
-                                style: kTextStyle.copyWith(fontSize: 12.0),
-                              );
-                            }),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              '6',
-                              style: kTitleTextStyle.copyWith(
-                                color: kPrimaryColor,
-                              ),
-                            ),
-                            Consumer<UserProvider>(
-                                builder: (context, value, child) {
-                              if (value.isLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return Text(
-                                value.user is ParkingUser
-                                    ? 'Upcoming Parking'
-                                    : 'Deactivated',
-                                style: kTextStyle.copyWith(fontSize: 12.0),
-                              );
-                            })
-                          ],
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              EditProfileScreen.id,
-                              arguments: Provider.of<UserProvider>(
-                                context,
-                                listen: false,
-                              ).user,
-                            );
-                          },
-                          style: kSendButtonStyle.copyWith(
-                            padding: const MaterialStatePropertyAll<
-                                EdgeInsetsGeometry>(
-                              EdgeInsets.symmetric(
-                                vertical: 10.0,
-                                horizontal: 25.0,
-                              ),
-                            ),
-                          ),
-                          child: const Text('Edit Profile'),
-                        ),
-                      ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 30.0,
+                      horizontal: 20.0,
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: height / 2.3),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50.0),
-                    topRight: Radius.circular(50.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          Provider.of<UserProvider>(context).user is ParkingUser
+                              ? parkingUserScrolledRow()
+                              : parkingProviderScrolledRow(),
+                    ),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 30.0,
-                    horizontal: 20.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: Provider.of<UserProvider>(context).user
-                            is ParkingUser
-                        ? const [
-                            ProfileScrolledRow(title: 'My Upcoming Parking'),
-                            ProfileScrolledRow(title: 'My Voucher'),
-                            ProfileScrolledRow(title: 'My Parking History'),
-                          ]
-                        : const [
-                            ProfileScrolledRow(title: 'My Parking Space'),
-                            ProfileScrolledRow(
-                                title: 'Deactivate Parking Spaces'),
-                          ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

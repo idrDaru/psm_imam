@@ -39,4 +39,18 @@ class NetworkHelper {
     );
     return response;
   }
+
+  Future<http.Response> putData() async {
+    await dotenv.load(fileName: ".env");
+    
+    http.Response response = await http.put(
+      Uri.parse(
+        '${dotenv.env['API_URL']}$endpoint',
+      ),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    return response;
+  }
 }

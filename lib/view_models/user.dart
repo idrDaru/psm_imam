@@ -25,8 +25,7 @@ class UserViewModel {
     User user = User(
       data['user']['type'],
       data['user']['email'].toString(),
-      data['user']['profile_file_name'].toString(),
-      data['user']['profile_file_path'].toString(),
+      data['user']['image_download_url'].toString(),
       data['user']['is_verified'],
     );
 

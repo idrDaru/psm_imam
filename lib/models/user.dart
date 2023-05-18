@@ -1,13 +1,12 @@
 class User {
-  String email, profileFilePath, profileFileName;
+  String email, imageDownloadURL;
   int type;
   bool isVerified;
 
   User(
     this.type,
     this.email,
-    this.profileFileName,
-    this.profileFilePath,
+    this.imageDownloadURL,
     this.isVerified,
   );
 }

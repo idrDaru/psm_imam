@@ -59,11 +59,19 @@ Widget buildMenuItems(BuildContext context) {
       runSpacing: 16.0,
       children: [
         ListTile(
-          leading: Image(
-            image: NetworkImage(
-              'https://cdn-icons-png.flaticon.com/512/194/194938.png',
-            ),
-          ),
+          leading: Consumer<UserProvider>(builder: (context, value, child) {
+            if (value.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return CircleAvatar(
+              radius: 30.0,
+              backgroundImage: NetworkImage(
+                value.user.user.imageDownloadURL,
+              ),
+            );
+          }),
           title: Flexible(child: Consumer<UserProvider>(
             builder: (context, value, child) {
               if (value.isLoading) {

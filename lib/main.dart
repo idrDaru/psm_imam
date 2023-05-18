@@ -49,7 +49,10 @@ class MyApp extends StatelessWidget {
               create: (context) => UserProvider(),
               child: const ProfileScreen(),
             ),
-        EditProfileScreen.id: (context) => const EditProfileScreen(),
+        EditProfileScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+              child: const EditProfileScreen(),
+            ),
 
         // MANAGE BOOKING SCREEN
         ManageBookingScreen.id: (context) => ChangeNotifierProvider(
