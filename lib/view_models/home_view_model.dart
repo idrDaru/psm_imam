@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:psm_imam/models/parking_location.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/services/networking.dart';
