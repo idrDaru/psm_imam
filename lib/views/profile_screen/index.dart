@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/models/parking_provider.dart';
+import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/services/networking.dart';
@@ -10,6 +12,7 @@ import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/custom_scaffold.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
 import 'package:psm_imam/views/edit_profile_screen/index.dart';
+import 'package:psm_imam/view_models/profile_view_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   static String id = 'profile_screen';
@@ -20,7 +23,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Map<String, List> profileData = {};
+  Map<String, List<dynamic>> datas = {};
+  List<ParkingSpace> parkingSpaces = [];
+  dynamic _data;
+  bool isLoading = false;
+  String count1 = "0", count2 = "0";
 
   @override
   void initState() {
@@ -28,32 +35,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<UserProvider>(context, listen: false).getUserData();
     });
+    fetchProfileData();
   }
 
-  getProfileData() async {
-    const storage = FlutterSecureStorage();
-    String? key = await storage.read(key: 'access_token');
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $key',
-    };
+  Future<void> fetchProfileData() async {
+    isLoading = true;
+    var profileViewModel = ProfileViewModel();
 
-    NetworkHelper networkHelper = NetworkHelper(endpoint: '', header: header);
-  }
+    _data = await profileViewModel.getUserBooking();
+    setState(() {
+      count1 = _data.where((c) => c.isPurchased == false).length.toString();
+      count2 = _data.where((c) => c.isPurchased == true).length.toString();
+    });
 
-  List<Widget> parkingProviderScrolledRow() {
-    return [
-      ProfileScrolledRow(title: 'My Parking Space'),
-      ProfileScrolledRow(title: 'Deactivate Parking Spaces'),
-    ];
-  }
+    // _data = await profileViewModel.getProviderParkingSpace();
+    //   setState(() {
+    //     count1 = _data.length.toString();
+    //     count2 = _data.where((c) => c.isActive == false).length.toString();
+    //   });
 
-  List<Widget> parkingUserScrolledRow() {
-    return [
-      ProfileScrolledRow(title: 'My Upcoming Parking'),
-      ProfileScrolledRow(title: 'My Voucher'),
-      ProfileScrolledRow(title: 'My Parking History'),
-    ];
+    isLoading = false;
   }
 
   @override
@@ -148,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Column(
                             children: [
                               Text(
-                                '2',
+                                count1,
                                 style: kTitleTextStyle.copyWith(
                                   color: kPrimaryColor,
                                 ),
@@ -172,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Column(
                             children: [
                               Text(
-                                '6',
+                                count2,
                                 style: kTitleTextStyle.copyWith(
                                   color: kPrimaryColor,
                                 ),
@@ -234,12 +235,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       vertical: 30.0,
                       horizontal: 20.0,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          Provider.of<UserProvider>(context).user is ParkingUser
-                              ? parkingUserScrolledRow()
-                              : parkingProviderScrolledRow(),
+                    child: Consumer<UserProvider>(
+                      builder: (context, value, child) {
+                        Widget result;
+                        value.user is ParkingUser
+                            ? result = ParkingUserScrolledRow(data: _data)
+                            : result = ParkingUserScrolledRow(data: _data);
+                        return result;
+                      },
                     ),
                   ),
                 ),
@@ -271,9 +274,90 @@ class ProfileHeader extends StatelessWidget {
   }
 }
 
-class ProfileScrolledRow extends StatelessWidget {
-  const ProfileScrolledRow({super.key, required this.title});
+class ProviderScrolledRow extends StatelessWidget {
+  const ProviderScrolledRow({super.key, required this.data});
 
+  final dynamic data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitledScrolledRow(
+          data: data.where((c) => c.isActive == true).toList(),
+          title: "My Parking Space",
+        ),
+        TitledScrolledRow(
+          data: data.where((c) => c.isActive == false).toList(),
+          title: "Deactivated Parking Spaces",
+        ),
+      ],
+    );
+  }
+}
+
+class ParkingUserScrolledRow extends StatelessWidget {
+  const ParkingUserScrolledRow({super.key, required this.data});
+  final dynamic data;
+
+  List<dynamic> filterUpcomingParking() {
+    List<dynamic> result = [];
+
+    List tmpResult = data.where((c) => c.isPurchased == true).toList();
+    for (var element in tmpResult) {
+      result.add(element.parkingSpace);
+    }
+
+    return result;
+  }
+
+  List<dynamic> filterWaitingForPayment() {
+    List<dynamic> result = [];
+
+    List tmpResult = data.where((c) => c.isPurchased == false).toList();
+    for (var element in tmpResult) {
+      result.add(element.parkingSpace);
+    }
+
+    return result;
+  }
+
+  List<dynamic> filterHistoryParking() {
+    List<dynamic> result = [];
+
+    List tmpResult = data.toList();
+    for (var element in tmpResult) {
+      result.add(element.parkingSpace);
+    }
+
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitledScrolledRow(
+          data: filterUpcomingParking(),
+          title: "My Upcoming Parking",
+        ),
+        TitledScrolledRow(
+          data: filterWaitingForPayment(),
+          title: "Waiting for Payment",
+        ),
+        TitledScrolledRow(
+          data: filterHistoryParking(),
+          title: "My Parking History",
+        ),
+      ],
+    );
+  }
+}
+
+class TitledScrolledRow extends StatelessWidget {
+  const TitledScrolledRow({super.key, required this.data, required this.title});
+
+  final dynamic data;
   final String title;
 
   @override
@@ -291,24 +375,11 @@ class ProfileScrolledRow extends StatelessWidget {
           height: 100.0,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 10,
+            itemCount: data.length,
             itemBuilder: (context, index) {
               return Row(
                 children: [
-                  Container(
-                    height: 100.0,
-                    width: 100.0,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  ScrolledRow(data: data[index]),
                   const SizedBox(width: 20.0),
                 ],
               );
@@ -316,6 +387,34 @@ class ProfileScrolledRow extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class ScrolledRow extends StatelessWidget {
+  const ScrolledRow({
+    super.key,
+    required this.data,
+  });
+
+  final dynamic data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100.0,
+      width: 100.0,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10.0),
+        image: DecorationImage(
+          image: NetworkImage(
+            data.imageDownloadUrl,
+            // 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80',
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

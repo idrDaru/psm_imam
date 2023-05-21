@@ -16,7 +16,7 @@ class UserViewModel {
     };
 
     NetworkHelper networkHelper =
-        NetworkHelper(endpoint: '/api/user', header: header);
+        NetworkHelper(endpoint: '/api/user/', header: header);
 
     var response = await networkHelper.getData();
     var decodeResponse = jsonDecode(response.body);
