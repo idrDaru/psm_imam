@@ -42,17 +42,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     isLoading = true;
     var profileViewModel = ProfileViewModel();
 
-    _data = await profileViewModel.getUserBooking();
-    setState(() {
-      count1 = _data.where((c) => c.isPurchased == false).length.toString();
-      count2 = _data.where((c) => c.isPurchased == true).length.toString();
-    });
+    // _data = await profileViewModel.getUserBooking();
+    // setState(() {
+    //   count1 = _data.where((c) => c.isPurchased == false).length.toString();
+    //   count2 = _data.where((c) => c.isPurchased == true).length.toString();
+    // });
 
-    // _data = await profileViewModel.getProviderParkingSpace();
-    //   setState(() {
-    //     count1 = _data.length.toString();
-    //     count2 = _data.where((c) => c.isActive == false).length.toString();
-    //   });
+    _data = await profileViewModel.getProviderParkingSpace();
+    setState(() {
+      count1 = _data.length.toString();
+      count2 = _data.where((c) => c.isActive == false).length.toString();
+    });
 
     isLoading = false;
   }
@@ -240,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Widget result;
                         value.user is ParkingUser
                             ? result = ParkingUserScrolledRow(data: _data)
-                            : result = ParkingUserScrolledRow(data: _data);
+                            : result = ProviderScrolledRow(data: _data);
                         return result;
                       },
                     ),

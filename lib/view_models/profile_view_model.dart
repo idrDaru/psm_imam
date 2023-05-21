@@ -3,8 +3,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/services/networking.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class ProfileViewModel {
   Future<dynamic> getProviderParkingSpace() async {
@@ -26,21 +24,24 @@ class ProfileViewModel {
     var data = decodeResponse['data'];
 
     List<ParkingSpace> parkingSpaces = [];
-    data.forEach((value) {
-      parkingSpaces.add(
-        ParkingSpace(
-          value['address_line_one'],
-          value['address_line_two'],
-          value['city'],
-          value['state_province'],
-          value['country'],
-          value['postal_code'],
-          value['image_download_url'],
-          value['parking_space_number'],
-          value['is_active'],
-        ),
-      );
-    });
+    data.forEach(
+      (value) {
+        parkingSpaces.add(
+          ParkingSpace(
+            value['name'],
+            value['address_line_one'],
+            value['address_line_two'],
+            value['city'],
+            value['state_province'],
+            value['country'],
+            value['postal_code'],
+            value['image_download_url'],
+            value['parking_space_number'],
+            value['is_active'],
+          ),
+        );
+      },
+    );
 
     return parkingSpaces;
   }
@@ -68,10 +69,10 @@ class ProfileViewModel {
         bookings.add(
           Booking(
             value['is_purchased'],
-            DateTime.parse(value['date']),
-            value['time_from'],
-            value['time_to'],
+            DateTime.parse(value['time_from']),
+            DateTime.parse(value['time_to']),
             ParkingSpace(
+              value['parking_space']['name'],
               value['parking_space']['address_line_one'],
               value['parking_space']['address_line_two'],
               value['parking_space']['city'],

@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
 
@@ -17,9 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  dynamic _data;
   final Completer<GoogleMapController> controller = Completer();
-
-  static const LatLng sourceLocation = LatLng(1.572818, 103.620371);
   LocationData? currentLocation;
 
   @override
@@ -29,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<UserProvider>(context, listen: false).getUserData();
     });
     getCurrentLocation();
+    getAllParkingSpaceLocations();
   }
 
   void getCurrentLocation() {
@@ -38,6 +38,32 @@ class _HomeScreenState extends State<HomeScreen> {
         currentLocation = value;
       });
     });
+  }
+
+  Future<void> getAllParkingSpaceLocations() async {
+    var homeViewModel = HomeViewModel();
+    var tmp = await homeViewModel.getAllParkingLocations();
+    setState(() {
+      _data = tmp;
+    });
+  }
+
+  Set<Marker> markers() {
+    Set<Marker> result = {};
+
+    for (var element in _data) {
+      result.add(
+        Marker(
+          markerId: MarkerId("value"),
+          position: LatLng(
+            element.latitude,
+            element.longitude,
+          ),
+        ),
+      );
+    }
+
+    return result;
   }
 
   @override
@@ -58,11 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-            currentLocation == null
-                ? Center(
+            currentLocation == null || _data == null
+                ? const Center(
                     child: Text("LOADING"),
                   )
                 : GoogleMap(
+                    myLocationEnabled: true,
                     compassEnabled: false,
                     zoomControlsEnabled: false,
                     initialCameraPosition: CameraPosition(
@@ -72,15 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       zoom: 14.5,
                     ),
-                    markers: {
-                      Marker(
-                        markerId: MarkerId("source"),
-                        position: LatLng(
-                          currentLocation!.latitude!,
-                          currentLocation!.longitude!,
-                        ),
-                      ),
-                    },
+                    markers: markers(),
                   ),
             Padding(
               padding: const EdgeInsets.only(

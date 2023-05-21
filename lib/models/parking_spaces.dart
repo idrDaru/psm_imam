@@ -5,11 +5,13 @@ class ParkingSpace {
       stateProvince,
       country,
       postalCode,
-      imageDownloadUrl;
+      imageDownloadUrl,
+      name;
   int parkingSpaceNumber;
   bool isActive;
 
   ParkingSpace(
+    this.name,
     this.addressLineOne,
     this.addressLineTwo,
     this.city,
