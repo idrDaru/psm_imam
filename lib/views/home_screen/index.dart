@@ -7,6 +7,7 @@ import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/views/components/constants.dart';
 import 'package:psm_imam/views/components/sidebar.dart';
+import 'package:psm_imam/views/components/submit_button.dart';
 
 class HomeScreen extends StatefulWidget {
   static String id = 'home_screen';
@@ -20,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   dynamic _data;
   final Completer<GoogleMapController> controller = Completer();
   LocationData? currentLocation;
+  bool isPopUp = false;
+  dynamic _onTapData;
 
   @override
   void initState() {
@@ -48,22 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Set<Marker> markers() {
-    Set<Marker> result = {};
-
-    for (var element in _data) {
-      result.add(
-        Marker(
-          markerId: MarkerId("value"),
-          position: LatLng(
-            element.latitude,
-            element.longitude,
-          ),
-        ),
-      );
-    }
-
-    return result;
+  Widget handlePopUpWidget(dynamic data) {
+    return ParkingSpaceDetail(data: data);
   }
 
   @override
@@ -99,8 +88,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       zoom: 14.5,
                     ),
-                    markers: markers(),
+                    markers: {
+                      for (var i = 0; i < _data.length; i++)
+                        Marker(
+                          markerId: MarkerId(_data[i].latitude.toString()),
+                          position: LatLng(
+                            _data[i].latitude,
+                            _data[i].longitude,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              isPopUp = !isPopUp;
+                              _onTapData = _data[i];
+                            });
+                          },
+                        ),
+                    },
                   ),
+            !isPopUp ? const SizedBox.shrink() : handlePopUpWidget(_onTapData),
             Padding(
               padding: const EdgeInsets.only(
                 bottom: 20.0,
@@ -148,7 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Radius.circular(50.0),
                                   ),
                                   borderSide: BorderSide(
-                                      color: kPrimaryColor, width: 3.0),
+                                    color: kPrimaryColor,
+                                    width: 3.0,
+                                  ),
                                 ),
                               ),
                               keyboardType: TextInputType.emailAddress,
@@ -170,6 +177,161 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ParkingSpaceDetail extends StatelessWidget {
+  ParkingSpaceDetail({super.key, required this.data});
+
+  dynamic data;
+
+  @override
+  Widget build(BuildContext context) {
+    var parkingSpace = data.parkingSpace;
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height / 2.8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: kSecondaryColor,
+            width: 2,
+          ),
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(25.0),
+            bottomRight: Radius.circular(25.0),
+          ),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20.0,
+            ),
+            Text(
+              parkingSpace.name,
+              style: kTitleTextStyle,
+            ),
+            const SizedBox(
+              height: 5.0,
+            ),
+            Text(
+              '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo}, ${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
+              style: kTextStyle.copyWith(fontSize: 13.0),
+            ),
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Car",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  ": RM 1",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  "Per Hour",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Motorcycle",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  ": RM 0.5",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  "Per Hour",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Divider(
+                thickness: 2.0,
+                color: kSecondaryColor,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Empty Car Space",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  ": 10",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Divider(
+                thickness: 2.0,
+                color: kSecondaryColor,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Empty Motorcycle Space",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+                Text(
+                  ": 50",
+                  style: kTextStyle.copyWith(fontSize: 13.0),
+                ),
+              ],
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: Divider(
+                thickness: 2.0,
+                color: kSecondaryColor,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    style: const ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(
+                        kSecondaryColor,
+                      ),
+                    ),
+                    child: Text(
+                      'Parking Layout',
+                      style: kTextStyle.copyWith(fontSize: 8.0),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              style: kSendButtonStyle,
+              child: const Text("Order"),
             ),
           ],
         ),

@@ -65,6 +65,8 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                         shrinkWrap: true,
                         itemCount: _data.length,
                         itemBuilder: (context, index) {
+                          var _parkingSpace = _data[index].parkingSpace;
+                          print(_data[index]);
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 5.0),
                             height: 340.0,
@@ -150,14 +152,15 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              _data[index].parkingSpace.name,
+                                              _parkingSpace.name,
                                               style: kTitleTextStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
                                             const SizedBox(height: 20.0),
                                             Text(
-                                              'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310 Johor Bahru, Johor, Malaysia',
+                                              '${_parkingSpace.addressLineOne}, ${_parkingSpace.addressLineTwo}, ${_parkingSpace.postalCode} ${_parkingSpace.city}, ${_parkingSpace.stateProvince}, ${_parkingSpace.country}',
+                                              // 'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310 Johor Bahru, Johor, Malaysia',
                                               style: kTextStyle.copyWith(
                                                 fontSize: 11.0,
                                               ),
