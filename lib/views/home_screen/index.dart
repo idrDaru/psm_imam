@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/components/map.dart';
 import 'package:psm_imam/providers/parking_space_provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
-import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/sidebar.dart';
-import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/parking_layout_screen/index.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -97,23 +96,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? const Center(
                     child: Text("LOADING"),
                   )
-                : GoogleMap(
-                    myLocationEnabled: true,
-                    compassEnabled: false,
-                    zoomControlsEnabled: false,
-                    initialCameraPosition: CameraPosition(
+                : GoogleMapView(
+                    markers: markers(),
+                    onTap: () {},
+                    cameraPosition: CameraPosition(
                       target: LatLng(
                         currentLocation!.latitude!,
                         currentLocation!.longitude!,
                       ),
                       zoom: 14.5,
                     ),
-                    onTap: (argument) {
-                      setState(() {
-                        isPopUp = false;
-                      });
-                    },
-                    markers: markers(),
                   ),
             !isPopUp ? const SizedBox.shrink() : handlePopUpWidget(_onTapData),
             Padding(

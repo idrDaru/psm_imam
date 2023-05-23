@@ -5,6 +5,6 @@ class DropdownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu();
+    return const DropdownMenu();
   }
 }

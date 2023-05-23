@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
-import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
 
 class ParkingLayoutScreen extends StatelessWidget {
@@ -9,6 +8,8 @@ class ParkingLayoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic args = ModalRoute.of(context)!.settings.arguments;
+    print(args);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -49,7 +50,7 @@ class ParkingLayoutScreen extends StatelessWidget {
                   style: kTextStyle,
                 ),
                 const SizedBox(height: 20.0),
-                Text("Selected: "),
+                const Text("Selected: "),
                 Center(
                   child: SubmitButton(
                     title: 'Select',

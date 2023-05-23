@@ -8,6 +8,7 @@ import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/sidebar.dart';
 import 'package:psm_imam/views/edit_booking_screen/index.dart';
+import 'package:psm_imam/views/parking_location_screen/index.dart';
 import 'package:psm_imam/views/payment_method_screen/index.dart';
 
 class ManageBookingScreen extends StatefulWidget {
@@ -131,7 +132,14 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                             ),
                                             const SizedBox(height: 10.0),
                                             ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  ParkingLocationScreen.id,
+                                                  arguments: parkingSpace
+                                                      .parkingLocation,
+                                                );
+                                              },
                                               style: const ButtonStyle(
                                                 backgroundColor:
                                                     MaterialStatePropertyAll<

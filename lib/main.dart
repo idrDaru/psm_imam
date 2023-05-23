@@ -13,6 +13,7 @@ import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/manage_booking_screen/index.dart';
 import 'package:psm_imam/views/manage_parking_space_screen/index.dart';
 import 'package:psm_imam/views/parking_layout_screen/index.dart';
+import 'package:psm_imam/views/parking_location_screen/index.dart';
 import 'package:psm_imam/views/payment_form_screen/index.dart';
 import 'package:psm_imam/views/payment_method_screen/index.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         ManageParkingSpaceScreen.id: (context) =>
             const ManageParkingSpaceScreen(),
         ParkingLayoutScreen.id: (context) => const ParkingLayoutScreen(),
+        ParkingLocationScreen.id: (context) => const ParkingLocationScreen(),
 
         // ACCOUNT MANAGEMENT ROUTES
         ProfileScreen.id: (context) => MultiProvider(
@@ -97,10 +99,6 @@ class MyApp extends StatelessWidget {
               ],
               child: const HomeScreen(),
             ),
-        // HomeScreen.id: (context) => ChangeNotifierProvider(
-        //       create: (context) => UserProvider(),
-        //       child: const HomeScreen(),
-        //     ),
       },
     );
   }

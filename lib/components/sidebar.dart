@@ -14,7 +14,7 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(builder: (context, value, child) {
-      return NavigationDrawer();
+      return const NavigationDrawer();
     });
   }
 }
@@ -94,7 +94,7 @@ Widget buildMenuItems(BuildContext context) {
         const Divider(color: kSecondaryColor),
         ListTile(
           leading: const Icon(Icons.home),
-          title: Text('Home'),
+          title: const Text('Home'),
           onTap: () {
             Navigator.pushNamed(context, HomeScreen.id);
           },
@@ -102,7 +102,7 @@ Widget buildMenuItems(BuildContext context) {
         const Divider(color: kSecondaryColor),
         ListTile(
           leading: const Icon(Icons.account_circle_outlined),
-          title: Text('Profile'),
+          title: const Text('Profile'),
           onTap: () {
             Navigator.pushNamed(context, ProfileScreen.id);
           },
@@ -111,7 +111,7 @@ Widget buildMenuItems(BuildContext context) {
         ListTile(
           leading: const Icon(Icons.description_outlined),
           // leading: const Icon(Icons.feed_outlined),
-          title: Text('My Bookings'),
+          title: const Text('My Bookings'),
           onTap: () {
             Navigator.pushNamed(context, ManageBookingScreen.id);
           },
@@ -119,7 +119,7 @@ Widget buildMenuItems(BuildContext context) {
         const Divider(color: kSecondaryColor),
         ListTile(
           leading: const Icon(Icons.logout_outlined),
-          title: Text('Logout'),
+          title: const Text('Logout'),
           onTap: () {
             Navigator.pushNamed(context, LoginScreen.id);
           },

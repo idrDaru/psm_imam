@@ -1,13 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:psm_imam/services/networking.dart';
 

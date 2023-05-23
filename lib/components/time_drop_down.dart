@@ -3,18 +3,22 @@ import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/submit_button.dart';
 
 class TimeDropdown extends StatefulWidget {
-  const TimeDropdown({super.key, required this.type});
+  TimeDropdown({
+    super.key,
+    required this.type,
+    required this.time,
+    required this.callback,
+  });
 
-  final String type;
+  final String? type;
+  final Map<String, String>? time;
+  void Function(String?, String?, String?)? callback;
 
   @override
   State<TimeDropdown> createState() => _TimeDropdownState();
 }
 
 class _TimeDropdownState extends State<TimeDropdown> {
-  String hour = '00';
-  String minute = '00';
-
   List<DropdownMenuItem<String>> hoursDropdownMenu() {
     List<DropdownMenuItem<String>> result = [];
 
@@ -76,21 +80,17 @@ class _TimeDropdownState extends State<TimeDropdown> {
                   ),
                 ),
                 DropdownButton(
-                  value: hour,
+                  value: widget.time!['hour'],
                   items: hoursDropdownMenu(),
                   onChanged: (value) {
-                    setState(() {
-                      hour = value!;
-                    });
+                    widget.callback!(value, widget.type, 'hour');
                   },
                 ),
                 DropdownButton(
-                  value: minute,
+                  value: widget.time!['minute'],
                   items: minutesDropdownMenu(),
                   onChanged: (value) {
-                    setState(() {
-                      minute = value!;
-                    });
+                    widget.callback!(value, widget.type, 'minute');
                   },
                 ),
                 Text(

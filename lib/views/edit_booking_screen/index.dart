@@ -4,6 +4,7 @@ import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:psm_imam/components/time_drop_down.dart';
+import 'package:psm_imam/views/parking_layout_screen/index.dart';
 
 class EditBookingScreen extends StatefulWidget {
   static String id = 'edit_booking_screen';
@@ -16,9 +17,12 @@ class EditBookingScreen extends StatefulWidget {
 class _EditBookingScreenState extends State<EditBookingScreen> {
   DateTime currentDate = DateTime.now();
 
+  handleChange() {}
+
   @override
   Widget build(BuildContext context) {
     dynamic args = ModalRoute.of(context)!.settings.arguments;
+    double width = MediaQuery.of(context).size.width;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -59,30 +63,25 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                       radius: 50.0,
                       backgroundImage: NetworkImage(
                         args.parkingSpace.imageDownloadUrl,
-                        // 'https://cdn-icons-png.flaticon.com/512/194/194938.png',
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       args.parkingSpace.name,
                       style: kTitleTextStyle,
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       '${args.parkingSpace.addressLineOne}, ${args.parkingSpace.addressLineTwo}, ${args.parkingSpace.postalCode}, ${args.parkingSpace.city}, ${args.parkingSpace.stateProvince}, ${args.parkingSpace.country}',
-                      // 'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310, Johor Bahru, Malaysia',
                       style: kTextStyle,
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 100.0,
-                  right: 100.0,
-                ),
+              SizedBox(
+                width: width / 1.3,
                 child: Column(
                   children: [
                     Text(
@@ -124,129 +123,137 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) => SingleChildScrollView(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom,
-                              ),
-                              child: const TimeDropdown(
-                                type: 'from',
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        shadowColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        padding: MaterialStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.all(0),
-                        ),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 0.5,
-                            color: Colors.black12,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 5,
-                              offset: Offset(0, 5),
-                            )
-                          ],
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10.0,
-                          ),
-                          color: Colors.white,
-                          child: Text(
-                            'From',
-                            style: kTextStyle.copyWith(
-                              color: Colors.grey,
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) => SingleChildScrollView(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom,
-                              ),
-                              child: const TimeDropdown(
-                                type: 'to',
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        shadowColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        padding: MaterialStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.all(0),
-                        ),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 0.5,
-                            color: Colors.black12,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 5,
-                              offset: Offset(0, 5),
-                            )
-                          ],
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10.0,
-                          ),
-                          color: Colors.white,
-                          child: Text(
-                            'To',
-                            style: kTextStyle.copyWith(
-                              color: Colors.grey,
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     showModalBottomSheet(
+                    //       isScrollControlled: true,
+                    //       context: context,
+                    //       builder: (context) => SingleChildScrollView(
+                    //         child: Container(
+                    //           padding: EdgeInsets.only(
+                    //             bottom:
+                    //                 MediaQuery.of(context).viewInsets.bottom,
+                    //           ),
+                    //           child: TimeDropdown(
+                    //             type: 'from',
+                    //             callback: handleChange(),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   style: const ButtonStyle(
+                    //     backgroundColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     shadowColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     padding: MaterialStatePropertyAll<EdgeInsets>(
+                    //       EdgeInsets.all(0),
+                    //     ),
+                    //   ),
+                    //   child: Container(
+                    //     width: MediaQuery.of(context).size.width,
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         width: 0.5,
+                    //         color: Colors.black12,
+                    //       ),
+                    //       boxShadow: const [
+                    //         BoxShadow(
+                    //           color: Colors.black26,
+                    //           blurRadius: 5,
+                    //           offset: Offset(0, 5),
+                    //         )
+                    //       ],
+                    //     ),
+                    //     child: Container(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 20.0,
+                    //         vertical: 10.0,
+                    //       ),
+                    //       color: Colors.white,
+                    //       child: Text(
+                    //         'From',
+                    //         style: kTextStyle.copyWith(
+                    //           color: Colors.grey,
+                    //           fontSize: 17.0,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 20.0),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     showModalBottomSheet(
+                    //       isScrollControlled: true,
+                    //       context: context,
+                    //       builder: (context) => SingleChildScrollView(
+                    //         child: Container(
+                    //           padding: EdgeInsets.only(
+                    //             bottom:
+                    //                 MediaQuery.of(context).viewInsets.bottom,
+                    //           ),
+                    //           child: TimeDropdown(
+                    //             type: 'to',
+                    //             callback: handleChange(),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   style: const ButtonStyle(
+                    //     backgroundColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     shadowColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     padding: MaterialStatePropertyAll<EdgeInsets>(
+                    //       EdgeInsets.all(0),
+                    //     ),
+                    //   ),
+                    //   child: Container(
+                    //     width: MediaQuery.of(context).size.width,
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         width: 0.5,
+                    //         color: Colors.black12,
+                    //       ),
+                    //       boxShadow: const [
+                    //         BoxShadow(
+                    //           color: Colors.black26,
+                    //           blurRadius: 5,
+                    //           offset: Offset(0, 5),
+                    //         )
+                    //       ],
+                    //     ),
+                    //     child: Container(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 20.0,
+                    //         vertical: 10.0,
+                    //       ),
+                    //       color: Colors.white,
+                    //       child: Text(
+                    //         'To',
+                    //         style: kTextStyle.copyWith(
+                    //           color: Colors.grey,
+                    //           fontSize: 17.0,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 20.0),
                   ],
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    ParkingLayoutScreen.id,
+                    arguments: args.parkingSpace.parkingLayout,
+                  );
+                },
                 style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(
                     kSecondaryColor,

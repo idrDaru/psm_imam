@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
-import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
 
 class EditParkingSpaceScreen extends StatefulWidget {
@@ -14,7 +13,7 @@ class EditParkingSpaceScreen extends StatefulWidget {
 
 class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
   bool isChecked = false;
-  String car_spot_price = '', motorcycle_spot_price = '';
+  String carSpotPrice = '', motorcycleSpotPrice = '';
 
   @override
   Widget build(BuildContext context) {

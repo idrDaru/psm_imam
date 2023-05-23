@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
@@ -74,7 +76,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         body: ListView(
           padding: const EdgeInsets.only(top: 0),
-          physics: const BouncingScrollPhysics(),
           children: [
             Provider.of<UserProvider>(context).isLoading ||
                     Provider.of<BookingProvider>(context).isLoading ||

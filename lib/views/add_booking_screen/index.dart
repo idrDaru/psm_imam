@@ -17,9 +17,33 @@ class AddBookingScreen extends StatefulWidget {
 class _AddBookingScreenState extends State<AddBookingScreen> {
   DateTime currentDate = DateTime.now();
 
+  Map<String, Map<String, String>> times = {
+    'from': {
+      'hour': '00',
+      'minute': '00',
+    },
+    'to': {
+      'hour': '00',
+      'minute': '00',
+    },
+  };
+
+  handleSubmit() async {
+    print(currentDate);
+  }
+
+  void handleChange(String? value, String? type, String? key) {
+    setState(() {
+      times[type]![key!] = value!;
+    });
+  }
+  
+
   @override
   Widget build(BuildContext context) {
     dynamic args = ModalRoute.of(context)!.settings.arguments;
+    double width = MediaQuery.of(context).size.width;
+    print(times);
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -77,15 +101,12 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 100.0,
-                  right: 100.0,
-                ),
+              SizedBox(
+                width: width / 1.3,
                 child: Column(
                   children: [
                     Text(
-                      'Select New Date',
+                      'Select Date',
                       style: kTitleTextStyle.copyWith(color: kPrimaryColor),
                     ),
                     const SizedBox(height: 10.0),
@@ -134,8 +155,16 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom,
                               ),
-                              child: const TimeDropdown(
+                              child: TimeDropdown(
                                 type: 'from',
+                                time: times['from'],
+                                callback: (value, type, key) {
+                                  handleChange(
+                                    value,
+                                    type,
+                                    key,
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -182,64 +211,65 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          context: context,
-                          builder: (context) => SingleChildScrollView(
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom,
-                              ),
-                              child: const TimeDropdown(
-                                type: 'to',
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        shadowColor:
-                            MaterialStatePropertyAll<Color>(Colors.transparent),
-                        padding: MaterialStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.all(0),
-                        ),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 0.5,
-                            color: Colors.black12,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 5,
-                              offset: Offset(0, 5),
-                            )
-                          ],
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 10.0,
-                          ),
-                          color: Colors.white,
-                          child: Text(
-                            'To',
-                            style: kTextStyle.copyWith(
-                              color: Colors.grey,
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     showModalBottomSheet(
+                    //       isScrollControlled: true,
+                    //       context: context,
+                    //       builder: (context) => SingleChildScrollView(
+                    //         child: Container(
+                    //           padding: EdgeInsets.only(
+                    //             bottom:
+                    //                 MediaQuery.of(context).viewInsets.bottom,
+                    //           ),
+                    //           child: TimeDropdown(
+                    //             type: 'to',
+                    //             callback: handleChange(),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   style: const ButtonStyle(
+                    //     backgroundColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     shadowColor:
+                    //         MaterialStatePropertyAll<Color>(Colors.transparent),
+                    //     padding: MaterialStatePropertyAll<EdgeInsets>(
+                    //       EdgeInsets.all(0),
+                    //     ),
+                    //   ),
+                    //   child: Container(
+                    //     width: MediaQuery.of(context).size.width,
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         width: 0.5,
+                    //         color: Colors.black12,
+                    //       ),
+                    //       boxShadow: const [
+                    //         BoxShadow(
+                    //           color: Colors.black26,
+                    //           blurRadius: 5,
+                    //           offset: Offset(0, 5),
+                    //         )
+                    //       ],
+                    //     ),
+                    //     child: Container(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 20.0,
+                    //         vertical: 10.0,
+                    //       ),
+                    //       color: Colors.white,
+                    //       child: Text(
+                    //         'To',
+                    //         style: kTextStyle.copyWith(
+                    //           color: Colors.grey,
+                    //           fontSize: 17.0,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20.0),
                   ],
                 ),
@@ -270,7 +300,9 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
               const SizedBox(height: 50.0),
               SubmitButton(
                 title: 'Save',
-                onPressed: () {},
+                onPressed: () {
+                  handleSubmit();
+                },
               ),
               const SizedBox(height: 50.0),
             ],

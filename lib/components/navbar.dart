@@ -18,7 +18,7 @@ class Navbar extends StatelessWidget {
           ),
         ),
         child: Column(
-          children: [
+          children: const [
             Text('Title'),
             Text('Title'),
             Text('Title'),

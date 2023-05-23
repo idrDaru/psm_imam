@@ -15,7 +15,7 @@ class AddParkingSpaceScreen extends StatefulWidget {
 
 class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
   bool isChecked = false;
-  String car_spot_price = '', motorcycle_spot_price = '';
+  String carSpotPrice = '', motorcycleSpotPrice = '';
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
                       ),
                       const SizedBox(height: 5.0),
                       ShadowTextField((value) {
-                        return motorcycle_spot_price = value;
+                        return motorcycleSpotPrice = value;
                       }, title: 'RM  | '),
                       const Text(
                         'Car spot price (optional)',
@@ -84,7 +84,7 @@ class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
                       ),
                       const SizedBox(height: 5.0),
                       ShadowTextField((value) {
-                        return car_spot_price = value;
+                        return carSpotPrice = value;
                       }, title: 'RM  | '),
                       const SizedBox(height: 20.0),
                       Row(

@@ -1,11 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:provider/provider.dart';
 import 'package:psm_imam/models/parking_provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
-import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/services/networking.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
