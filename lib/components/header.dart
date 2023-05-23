@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key, required this.title});

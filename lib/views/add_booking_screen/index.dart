@@ -4,16 +4,17 @@ import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:psm_imam/components/time_drop_down.dart';
+import 'package:psm_imam/views/parking_layout_screen/index.dart';
 
-class EditBookingScreen extends StatefulWidget {
-  static String id = 'edit_booking_screen';
-  const EditBookingScreen({super.key});
+class AddBookingScreen extends StatefulWidget {
+  static String id = 'add_booking_screen';
+  const AddBookingScreen({super.key});
 
   @override
-  State<EditBookingScreen> createState() => _EditBookingScreenState();
+  State<AddBookingScreen> createState() => _AddBookingScreenState();
 }
 
-class _EditBookingScreenState extends State<EditBookingScreen> {
+class _AddBookingScreenState extends State<AddBookingScreen> {
   DateTime currentDate = DateTime.now();
 
   @override
@@ -30,7 +31,7 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
             children: [
               Stack(
                 children: [
-                  const Header(title: 'Edit Booking'),
+                  const Header(title: 'Order'),
                   AppBar(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -58,23 +59,21 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                     CircleAvatar(
                       radius: 50.0,
                       backgroundImage: NetworkImage(
-                        args.parkingSpace.imageDownloadUrl,
-                        // 'https://cdn-icons-png.flaticon.com/512/194/194938.png',
+                        args.imageDownloadUrl,
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
-                      args.parkingSpace.name,
+                      args.name,
                       style: kTitleTextStyle,
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
-                      '${args.parkingSpace.addressLineOne}, ${args.parkingSpace.addressLineTwo}, ${args.parkingSpace.postalCode}, ${args.parkingSpace.city}, ${args.parkingSpace.stateProvince}, ${args.parkingSpace.country}',
-                      // 'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310, Johor Bahru, Malaysia',
+                      '${args.addressLineOne}, ${args.addressLineTwo}, ${args.postalCode}, ${args.city}, ${args.stateProvince}, ${args.country}',
                       style: kTextStyle,
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                   ],
                 ),
               ),
@@ -246,7 +245,12 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    ParkingLayoutScreen.id,
+                  );
+                },
                 style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll<Color>(
                     kSecondaryColor,
@@ -255,7 +259,7 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Change Parking Layout',
+                    'Select Parking Layout',
                     style: kTextStyle.copyWith(
                       fontSize: 13.0,
                     ),

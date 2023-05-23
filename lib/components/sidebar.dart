@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/providers/user_provider.dart';
-import 'package:psm_imam/views/components/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/views/home_screen/index.dart';
 import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/manage_booking_screen/index.dart';

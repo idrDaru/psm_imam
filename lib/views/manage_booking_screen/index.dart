@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/providers/booking_provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
-import 'package:psm_imam/view_models/manage_booking_view_model.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
-import 'package:psm_imam/views/components/sidebar.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
+import 'package:psm_imam/components/sidebar.dart';
 import 'package:psm_imam/views/edit_booking_screen/index.dart';
 import 'package:psm_imam/views/payment_method_screen/index.dart';
 
@@ -21,15 +23,16 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timestamp) {
       Provider.of<UserProvider>(context, listen: false).getUserData();
+      getUserBooking();
     });
-    getUserBooking();
   }
 
-  Future<void> getUserBooking() async {
-    var manageBookingViewModel = ManageBookingViewModel();
-    var tmp = await manageBookingViewModel.getUserBooking();
+  getUserBooking() async {
+    await Provider.of<BookingProvider>(context, listen: false).getUserBooking();
+
+    var tmp = Provider.of<BookingProvider>(context, listen: false).booking;
     setState(() {
       _data = tmp;
     });
@@ -40,13 +43,15 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
+        drawer: Consumer<UserProvider>(builder: (context, value, child) {
+          return const Sidebar();
+        }),
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: kPrimaryColor),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        drawer: const Sidebar(),
-        extendBodyBehindAppBar: true,
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
@@ -57,16 +62,15 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20.0,
                 ),
-                child: _data == null
+                child: Provider.of<BookingProvider>(context).isLoading
                     ? const Center(
-                        child: Text("LOADING"),
+                        child: CircularProgressIndicator(),
                       )
                     : ListView.builder(
                         shrinkWrap: true,
                         itemCount: _data.length,
                         itemBuilder: (context, index) {
-                          var _parkingSpace = _data[index].parkingSpace;
-                          print(_data[index]);
+                          var parkingSpace = _data[index].parkingSpace;
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 5.0),
                             height: 340.0,
@@ -100,10 +104,11 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                   Radius.circular(100.0),
                                                 ),
                                               ),
-                                              child: const CircleAvatar(
+                                              child: CircleAvatar(
                                                 radius: 40.0,
                                                 backgroundImage: NetworkImage(
-                                                  'https://cdn-icons-png.flaticon.com/512/194/194938.png',
+                                                  parkingSpace.imageDownloadUrl,
+                                                  // 'https://cdn-icons-png.flaticon.com/512/194/194938.png',
                                                 ),
                                               ),
                                             ),
@@ -152,14 +157,14 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              _parkingSpace.name,
+                                              parkingSpace.name,
                                               style: kTitleTextStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                               ),
                                             ),
                                             const SizedBox(height: 20.0),
                                             Text(
-                                              '${_parkingSpace.addressLineOne}, ${_parkingSpace.addressLineTwo}, ${_parkingSpace.postalCode} ${_parkingSpace.city}, ${_parkingSpace.stateProvince}, ${_parkingSpace.country}',
+                                              '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo}, ${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
                                               // 'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310 Johor Bahru, Johor, Malaysia',
                                               style: kTextStyle.copyWith(
                                                 fontSize: 11.0,
@@ -186,7 +191,7 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      'Car Space : 1',
+                                                      'Car Space : ${_data[index].totalCar.toString()}',
                                                       style:
                                                           kTextStyle.copyWith(
                                                         fontSize: 11.0,
@@ -194,25 +199,25 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                     ),
                                                     const SizedBox(height: 5.0),
                                                     Text(
-                                                      'Motorcycle Space : 0',
+                                                      'Motorcycle Space : ${_data[index].totalMotorcycle.toString()}',
                                                       style:
                                                           kTextStyle.copyWith(
                                                         fontSize: 11.0,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5.0),
-                                                    Text(
-                                                      'Parking Layout : 87',
-                                                      style:
-                                                          kTextStyle.copyWith(
-                                                        fontSize: 11.0,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5.0),
+                                                    // Text(
+                                                    //   'Parking Layout : 87',
+                                                    //   style:
+                                                    //       kTextStyle.copyWith(
+                                                    //     fontSize: 11.0,
+                                                    //   ),
+                                                    // ),
+                                                    // const SizedBox(height: 5.0),
                                                   ],
                                                 ),
                                                 Text(
-                                                  'Total Price : RM 1',
+                                                  'Total Price : RM ${_data[index].totalPrice.toString()}',
                                                   style: kTextStyle.copyWith(
                                                       color: kPrimaryColor,
                                                       fontSize: 11.0),
@@ -247,7 +252,10 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.pushNamed(
-                                              context, EditBookingScreen.id);
+                                            context,
+                                            EditBookingScreen.id,
+                                            arguments: _data[index],
+                                          );
                                         },
                                         style: const ButtonStyle(
                                           backgroundColor:

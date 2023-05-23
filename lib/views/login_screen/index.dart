@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
+import 'package:psm_imam/components/shadow_text_field.dart';
+import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/home_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
 import 'package:psm_imam/services/networking.dart';
@@ -46,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
         value: decodeResponse['data']['access_token'],
       );
 
-      // ignore: use_build_context_synchronously
       Navigator.pushNamed(context, HomeScreen.id);
     } else {
       print(decodeResponse['message']);

@@ -7,10 +7,10 @@ import 'package:psm_imam/models/parking_provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/services/networking.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
+import 'package:psm_imam/components/shadow_text_field.dart';
+import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -24,14 +24,6 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   Map<String, String> data = {};
   String confirmPassword = '';
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getUserData();
-    });
-  }
 
   handleSubmit() async {
     // if (confirmPassword != data['password']) {
@@ -65,7 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ModalRoute.of(context)!.settings.arguments;
+    dynamic user = ModalRoute.of(context)!.settings.arguments;
 
     return SafeArea(
       child: Scaffold(
@@ -103,19 +95,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Consumer<UserProvider>(builder: (context, value, child) {
-                        if (value.isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        return CircleAvatar(
-                          radius: 50.0,
-                          backgroundImage: NetworkImage(
-                            value.user.user.imageDownloadURL,
-                          ),
-                        );
-                      }),
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage: NetworkImage(
+                          user.user.imageDownloadURL,
+                        ),
+                      ),
                       const SizedBox(height: 8.0),
                       SubmitButton(title: 'Change Photo', onPressed: () {}),
                       const SizedBox(height: 50.0),
@@ -181,10 +166,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           title: "************"),
                       const SizedBox(height: 20.0),
                       SubmitButton(
-                          title: 'Save',
-                          onPressed: () {
-                            handleSubmit();
-                          }),
+                        title: 'Save',
+                        onPressed: () {
+                          handleSubmit();
+                        },
+                      ),
                     ],
                   ),
                 ),

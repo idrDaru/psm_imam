@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
+import 'package:psm_imam/components/shadow_text_field.dart';
+import 'package:psm_imam/components/submit_button.dart';
 
 class EditParkingSpaceScreen extends StatefulWidget {
   static String id = 'edit_parking_space_screen';

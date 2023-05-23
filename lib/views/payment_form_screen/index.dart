@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/shadow_text_field.dart';
+import 'package:psm_imam/components/submit_button.dart';
 
 class PaymentFormScreen extends StatelessWidget {
   static String id = 'payment_form_screen';

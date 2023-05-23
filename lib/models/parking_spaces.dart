@@ -1,3 +1,6 @@
+import 'package:psm_imam/models/parking_layout.dart';
+import 'package:psm_imam/models/parking_location.dart';
+
 class ParkingSpace {
   String addressLineOne,
       addressLineTwo,
@@ -9,6 +12,8 @@ class ParkingSpace {
       name;
   int parkingSpaceNumber;
   bool isActive;
+  ParkingLayout parkingLayout;
+  ParkingLocation parkingLocation;
 
   ParkingSpace(
     this.name,
@@ -21,5 +26,7 @@ class ParkingSpace {
     this.imageDownloadUrl,
     this.parkingSpaceNumber,
     this.isActive,
+    this.parkingLayout,
+    this.parkingLocation,
   );
 }

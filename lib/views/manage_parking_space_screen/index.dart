@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/views/edit_parking_space_screen/index.dart';
 
 class ManageParkingSpaceScreen extends StatelessWidget {

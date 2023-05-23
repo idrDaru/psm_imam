@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/submit_button.dart';
 
 class TimeDropdown extends StatefulWidget {
   const TimeDropdown({super.key, required this.type});

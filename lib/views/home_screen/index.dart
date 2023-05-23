@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/providers/parking_space_provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/home_view_model.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/sidebar.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/views/add_booking_screen/index.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/sidebar.dart';
+import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/views/parking_layout_screen/index.dart';
 
 class HomeScreen extends StatefulWidget {
   static String id = 'home_screen';
@@ -29,9 +32,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<UserProvider>(context, listen: false).getUserData();
+      Provider.of<ParkingSpaceProvider>(context, listen: false)
+          .getAllParkingSpace();
     });
     getCurrentLocation();
-    getAllParkingSpaceLocations();
   }
 
   void getCurrentLocation() {
@@ -43,12 +47,26 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> getAllParkingSpaceLocations() async {
-    var homeViewModel = HomeViewModel();
-    var tmp = await homeViewModel.getAllParkingLocations();
-    setState(() {
-      _data = tmp;
-    });
+  Set<Marker> markers() {
+    Set<Marker> result = {};
+    for (var i = 0; i < _data.length; i++) {
+      result.add(
+        Marker(
+          markerId: MarkerId(_data[i].parkingLocation.latitude.toString()),
+          position: LatLng(
+            _data[i].parkingLocation.latitude,
+            _data[i].parkingLocation.longitude,
+          ),
+          onTap: () {
+            setState(() {
+              isPopUp = !isPopUp;
+              _onTapData = _data[i];
+            });
+          },
+        ),
+      );
+    }
+    return result;
   }
 
   Widget handlePopUpWidget(dynamic data) {
@@ -57,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _data = Provider.of<ParkingSpaceProvider>(context).parkingSpace;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -73,7 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-            currentLocation == null || _data == null
+            currentLocation == null ||
+                    Provider.of<ParkingSpaceProvider>(context).isLoading
                 ? const Center(
                     child: Text("LOADING"),
                   )
@@ -88,22 +108,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       zoom: 14.5,
                     ),
-                    markers: {
-                      for (var i = 0; i < _data.length; i++)
-                        Marker(
-                          markerId: MarkerId(_data[i].latitude.toString()),
-                          position: LatLng(
-                            _data[i].latitude,
-                            _data[i].longitude,
-                          ),
-                          onTap: () {
-                            setState(() {
-                              isPopUp = !isPopUp;
-                              _onTapData = _data[i];
-                            });
-                          },
-                        ),
+                    onTap: (argument) {
+                      setState(() {
+                        isPopUp = false;
+                      });
                     },
+                    markers: markers(),
                   ),
             !isPopUp ? const SizedBox.shrink() : handlePopUpWidget(_onTapData),
             Padding(
@@ -185,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// ignore: must_be_immutable
 class ParkingSpaceDetail extends StatelessWidget {
   ParkingSpaceDetail({super.key, required this.data});
 
@@ -192,7 +203,6 @@ class ParkingSpaceDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var parkingSpace = data.parkingSpace;
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: Container(
@@ -215,14 +225,14 @@ class ParkingSpaceDetail extends StatelessWidget {
               height: 20.0,
             ),
             Text(
-              parkingSpace.name,
+              data.name,
               style: kTitleTextStyle,
             ),
             const SizedBox(
               height: 5.0,
             ),
             Text(
-              '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo}, ${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
+              '${data.addressLineOne}, ${data.addressLineTwo}, ${data.postalCode} ${data.city}, ${data.stateProvince}, ${data.country}',
               style: kTextStyle.copyWith(fontSize: 13.0),
             ),
             const SizedBox(height: 20.0),
@@ -234,7 +244,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": RM 1",
+                  ": RM ${data.parkingLayout.carPrice}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
@@ -251,7 +261,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": RM 0.5",
+                  ": RM ${data.parkingLayout.motorcyclePrice}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
@@ -275,7 +285,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": 10",
+                  ": ${data.parkingLayout.parkingSpot.where((c) => c.status == true && c.type == 2).length}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
               ],
@@ -295,7 +305,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": 50",
+                  ": ${data.parkingLayout.parkingSpot.where((c) => c.status == true && c.type == 1).length}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
               ],
@@ -313,7 +323,12 @@ class ParkingSpaceDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        ParkingLayoutScreen.id,
+                      );
+                    },
                     style: const ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll<Color>(
                         kSecondaryColor,
@@ -329,7 +344,13 @@ class ParkingSpaceDetail extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  AddBookingScreen.id,
+                  arguments: data,
+                );
+              },
               style: kSendButtonStyle,
               child: const Text("Order"),
             ),

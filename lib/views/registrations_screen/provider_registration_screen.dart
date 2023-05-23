@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/header.dart';
-import 'package:psm_imam/views/components/shadow_text_field.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/header.dart';
+import 'package:psm_imam/components/shadow_text_field.dart';
+import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/services/networking.dart';
 import 'dart:convert';
@@ -49,7 +49,8 @@ class _ProviderRegistrationScreenState
       'Content-Type': 'application/json',
     };
 
-    NetworkHelper networkHelper = NetworkHelper(endpoint: '/api/register/', header: header, body: data);
+    NetworkHelper networkHelper =
+        NetworkHelper(endpoint: '/api/register/', header: header, body: data);
     var response = await networkHelper.postData();
     var decodeResponse = jsonDecode(response.body);
     if (response.statusCode == 201) {
@@ -137,7 +138,8 @@ class _ProviderRegistrationScreenState
                           Flexible(
                             child: RichText(
                               text: TextSpan(
-                                text: 'By creating an account, you agree to our ',
+                                text:
+                                    'By creating an account, you agree to our ',
                                 style: kTextStyle.copyWith(
                                   fontSize: 13.0,
                                 ),

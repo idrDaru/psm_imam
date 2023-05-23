@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/sidebar.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/sidebar.dart';
 
 class CustomScaffold extends StatelessWidget {
   CustomScaffold({super.key, required this.body});

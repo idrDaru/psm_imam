@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/views/components/constants.dart';
-import 'package:psm_imam/views/components/submit_button.dart';
+import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/payment_form_screen/index.dart';
 
 class PaymentMethodScreen extends StatelessWidget {
