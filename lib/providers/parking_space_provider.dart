@@ -36,6 +36,7 @@ class ParkingSpaceProvider extends ChangeNotifier {
         value['parkingspot_set'].forEach((value) {
           parkingSpot.add(
             ParkingSpot(
+              value['id'],
               value['name'],
               value['position'],
               value['type'],
@@ -47,6 +48,7 @@ class ParkingSpaceProvider extends ChangeNotifier {
 
       parkingSpace.add(
         ParkingSpace(
+          value['id'],
           value['name'],
           value['address_line_one'],
           value['address_line_two'],
@@ -106,6 +108,7 @@ class ParkingSpaceProvider extends ChangeNotifier {
     data.forEach((value) {
       parkingSpaces.add(
         ParkingSpace(
+          value['id'],
           value['name'],
           value['address_line_one'],
           value['address_line_two'],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/providers/booking_provider.dart';
 import 'package:psm_imam/providers/parking_space_provider.dart';
+import 'package:psm_imam/providers/time_provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
@@ -16,6 +17,7 @@ import 'package:psm_imam/views/parking_layout_screen/index.dart';
 import 'package:psm_imam/views/parking_location_screen/index.dart';
 import 'package:psm_imam/views/payment_form_screen/index.dart';
 import 'package:psm_imam/views/payment_method_screen/index.dart';
+import 'package:psm_imam/views/payment_screen/index.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
@@ -72,7 +74,10 @@ class MyApp extends StatelessWidget {
             ),
 
         // MANAGE BOOKING SCREEN
-        AddBookingScreen.id: (context) => const AddBookingScreen(),
+        AddBookingScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => TimeProvider(),
+              child: const AddBookingScreen(),
+            ),
         ManageBookingScreen.id: (context) => MultiProvider(
               providers: [
                 ChangeNotifierProvider(
@@ -89,12 +94,14 @@ class MyApp extends StatelessWidget {
         // PAYMENT SCREEN
         PaymentFormScreen.id: (context) => const PaymentFormScreen(),
         PaymentMethodScreen.id: (context) => const PaymentMethodScreen(),
+        PaymentScreen.id: (context) => const PaymentScreen(),
 
         // HOME SCREEN
         HomeScreen.id: (context) => MultiProvider(
               providers: [
                 ChangeNotifierProvider(
-                    create: (context) => ParkingSpaceProvider()),
+                  create: (context) => ParkingSpaceProvider(),
+                ),
                 ChangeNotifierProvider(create: (context) => UserProvider()),
               ],
               child: const HomeScreen(),

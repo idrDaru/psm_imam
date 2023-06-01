@@ -43,6 +43,7 @@ class BookingProvider extends ChangeNotifier {
           value['parkingspot_set'].forEach((value) {
             parkingSpot.add(
               ParkingSpot(
+                value['id'],
                 value['name'],
                 value['position'],
                 value['type'],
@@ -62,6 +63,7 @@ class BookingProvider extends ChangeNotifier {
             DateTime.parse(value['time_from']),
             DateTime.parse(value['time_to']),
             ParkingSpace(
+              value['parking_space']['id'],
               value['parking_space']['name'],
               value['parking_space']['address_line_one'],
               value['parking_space']['address_line_two'],

@@ -9,13 +9,15 @@ class ParkingSpace {
       country,
       postalCode,
       imageDownloadUrl,
-      name;
+      name,
+      id;
   int parkingSpaceNumber;
   bool isActive;
   ParkingLayout parkingLayout;
   ParkingLocation parkingLocation;
 
   ParkingSpace(
+    this.id,
     this.name,
     this.addressLineOne,
     this.addressLineTwo,

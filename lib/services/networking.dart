@@ -13,7 +13,7 @@ class NetworkHelper {
   final String endpoint;
   final String param;
   final Map<String, String> header;
-  final Map<String, String> body;
+  final Map<String, dynamic> body;
 
   Future<http.Response> postData() async {
     await dotenv.load(fileName: ".env");
@@ -42,7 +42,7 @@ class NetworkHelper {
 
   Future<http.Response> putData() async {
     await dotenv.load(fileName: ".env");
-    
+
     http.Response response = await http.put(
       Uri.parse(
         '${dotenv.env['API_URL']}$endpoint',

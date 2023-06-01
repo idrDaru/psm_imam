@@ -319,6 +319,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         ParkingLayoutScreen.id,
+                        arguments: data.parkingLayout,
                       );
                     },
                     style: const ButtonStyle(

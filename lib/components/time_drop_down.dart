@@ -1,52 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/providers/time_provider.dart';
 
-class TimeDropdown extends StatefulWidget {
-  TimeDropdown({
-    super.key,
-    required this.type,
-    required this.time,
-    required this.callback,
-  });
+class TimeDropdown extends StatelessWidget {
+  const TimeDropdown({super.key, required this.type});
 
-  final String? type;
-  final Map<String, String>? time;
-  void Function(String?, String?, String?)? callback;
-
-  @override
-  State<TimeDropdown> createState() => _TimeDropdownState();
-}
-
-class _TimeDropdownState extends State<TimeDropdown> {
-  List<DropdownMenuItem<String>> hoursDropdownMenu() {
-    List<DropdownMenuItem<String>> result = [];
-
-    for (String item in hours) {
-      var newItem = DropdownMenuItem(
-        value: item,
-        child: Text(item),
-      );
-      result.add(newItem);
-    }
-
-    return result;
-  }
-
-  List<DropdownMenuItem<String>> minutesDropdownMenu() {
-    List<DropdownMenuItem<String>> result = [];
-
-    for (String item in minutes) {
-      var newItem = DropdownMenuItem(
-        value: item,
-        child: Text(item),
-      );
-      result.add(newItem);
-    }
-
-    return result;
-  }
-
+  final String type;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,7 +26,7 @@ class _TimeDropdownState extends State<TimeDropdown> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              widget.type == 'from'
+              type == 'from'
                   ? 'At what time will your parking start?'
                   : 'At what time will your parking end?',
               style: kTextStyle,
@@ -79,18 +40,50 @@ class _TimeDropdownState extends State<TimeDropdown> {
                     color: kPrimaryColor,
                   ),
                 ),
-                DropdownButton(
-                  value: widget.time!['hour'],
-                  items: hoursDropdownMenu(),
-                  onChanged: (value) {
-                    widget.callback!(value, widget.type, 'hour');
+                Consumer<TimeProvider>(
+                  builder: (context, value, child) {
+                    return DropdownButton(
+                      value: type == 'from'
+                          ? value.from['hour']
+                          : value.to['hour'],
+                      items: value.hoursDropdownMenu(),
+                      onChanged: (newValue) {
+                        type == 'from'
+                            ? Provider.of<TimeProvider>(context, listen: false)
+                                .setFrom(
+                                'hour',
+                                newValue.toString(),
+                              )
+                            : Provider.of<TimeProvider>(context, listen: false)
+                                .setTo(
+                                'hour',
+                                newValue.toString(),
+                              );
+                      },
+                    );
                   },
                 ),
-                DropdownButton(
-                  value: widget.time!['minute'],
-                  items: minutesDropdownMenu(),
-                  onChanged: (value) {
-                    widget.callback!(value, widget.type, 'minute');
+                Consumer<TimeProvider>(
+                  builder: (context, value, child) {
+                    return DropdownButton(
+                      value: type == 'from'
+                          ? value.from['minute']
+                          : value.to['minute'],
+                      items: value.hoursDropdownMenu(),
+                      onChanged: (newValue) {
+                        type == 'from'
+                            ? Provider.of<TimeProvider>(context, listen: false)
+                                .setFrom(
+                                'minute',
+                                newValue.toString(),
+                              )
+                            : Provider.of<TimeProvider>(context, listen: false)
+                                .setTo(
+                                'minute',
+                                newValue.toString(),
+                              );
+                      },
+                    );
                   },
                 ),
                 Text(

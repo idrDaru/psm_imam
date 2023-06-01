@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/views/payment_form_screen/index.dart';
+import 'package:psm_imam/views/payment_screen/index.dart';
 
 class PaymentMethodScreen extends StatelessWidget {
   static String id = 'payment_method_screen';
@@ -51,7 +52,9 @@ class PaymentMethodScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 50.0),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, PaymentScreen.id);
+                  },
                   style: const ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll<Color>(Colors.white),
@@ -82,8 +85,8 @@ class PaymentMethodScreen extends StatelessWidget {
                           SizedBox(
                             height: 50.0,
                             width: 100.0,
-                            child:
-                                Image.asset('assets/images/Master-Card-Logo.png'),
+                            child: Image.asset(
+                                'assets/images/Master-Card-Logo.png'),
                           ),
                           const SizedBox(width: 30.0),
                           Column(
@@ -109,7 +112,9 @@ class PaymentMethodScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20.0),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, PaymentScreen.id);
+                  },
                   style: const ButtonStyle(
                     backgroundColor:
                         MaterialStatePropertyAll<Color>(Colors.white),
@@ -174,7 +179,9 @@ class PaymentMethodScreen extends StatelessWidget {
                       EdgeInsets.all(0),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, PaymentScreen.id);
+                  },
                   child: Container(
                     height: 80.0,
                     decoration: BoxDecoration(
