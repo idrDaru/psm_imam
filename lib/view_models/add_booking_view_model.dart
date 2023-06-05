@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:psm_imam/services/networking.dart';
+import 'package:psm_imam/views/manage_booking_screen/index.dart';
 
 class AddBookingViewModel {
   Future<dynamic> submitAddBooking(context, data) async {
@@ -23,7 +24,7 @@ class AddBookingViewModel {
     var response = await networkHelper.postData();
     var decodeResponse = jsonDecode(response.body);
     if (decodeResponse['status'] == 201) {
-      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, ManageBookingScreen.id);
     } else {
       print(decodeResponse['message']);
     }

@@ -1,11 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/components/map.dart';
-import 'package:psm_imam/providers/parking_space_provider.dart';
-import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/models/parking_spaces.dart';
+import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/sidebar.dart';
@@ -20,7 +23,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  dynamic _data;
+  List<ParkingSpace> parkingSpace = [];
+
   final Completer<GoogleMapController> controller = Completer();
   LocationData? currentLocation;
   bool isPopUp = false;
@@ -30,11 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<UserProvider>(context, listen: false).getUserData();
-      Provider.of<ParkingSpaceProvider>(context, listen: false)
-          .getAllParkingSpace();
+      getHomeScreenData();
     });
     getCurrentLocation();
+  }
+
+  getHomeScreenData() async {
+    await Provider.of<HomeViewModel>(context, listen: false).getUser();
+    await Provider.of<HomeViewModel>(context, listen: false)
+        .getAllParkingSpace();
+
+    setState(() {
+      parkingSpace =
+          Provider.of<HomeViewModel>(context, listen: false).parkingSpace;
+    });
   }
 
   void getCurrentLocation() {
@@ -48,18 +61,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Set<Marker> markers() {
     Set<Marker> result = {};
-    for (var i = 0; i < _data.length; i++) {
+    for (var i = 0; i < parkingSpace.length; i++) {
       result.add(
         Marker(
-          markerId: MarkerId(_data[i].parkingLocation.latitude.toString()),
+          markerId:
+              MarkerId(parkingSpace[i].parkingLocation!.latitude.toString()),
           position: LatLng(
-            _data[i].parkingLocation.latitude,
-            _data[i].parkingLocation.longitude,
+            parkingSpace[i].parkingLocation!.latitude!.toDouble(),
+            parkingSpace[i].parkingLocation!.longitude!.toDouble(),
           ),
           onTap: () {
             setState(() {
               isPopUp = !isPopUp;
-              _onTapData = _data[i];
+              _onTapData = parkingSpace[i];
             });
           },
         ),
@@ -74,7 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _data = Provider.of<ParkingSpaceProvider>(context).parkingSpace;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -85,18 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
           shadowColor: Colors.transparent,
           elevation: 0,
         ),
-        drawer: Consumer<UserProvider>(builder: (context, value, child) {
-          return const Sidebar();
-        }),
+        drawer: const Sidebar(),
         extendBodyBehindAppBar: true,
-        body: Stack(
-          children: [
-            currentLocation == null ||
-                    Provider.of<ParkingSpaceProvider>(context).isLoading
-                ? const Center(
-                    child: Text("LOADING"),
-                  )
-                : GoogleMapView(
+        body: currentLocation == null ||
+                Provider.of<HomeViewModel>(context).isLoading
+            ? const LoadingScreen()
+            : Stack(
+                children: [
+                  GoogleMapView(
                     markers: markers(),
                     onTap: () {},
                     cameraPosition: CameraPosition(
@@ -107,81 +116,83 @@ class _HomeScreenState extends State<HomeScreen> {
                       zoom: 14.5,
                     ),
                   ),
-            !isPopUp ? const SizedBox.shrink() : handlePopUpWidget(_onTapData),
-            Padding(
-              padding: const EdgeInsets.only(
-                bottom: 20.0,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                          ),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black26,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 5),
+                  !isPopUp
+                      ? const SizedBox.shrink()
+                      : handlePopUpWidget(_onTapData),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 20.0,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 6,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0,
                                 ),
-                              ],
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(50.0),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black26,
+                                        blurRadius: 5,
+                                        offset: Offset(0, 5),
+                                      ),
+                                    ],
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(50.0),
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    onChanged: (value) {},
+                                    decoration: kTextFieldDecoration.copyWith(
+                                      hintText: 'Search location',
+                                      enabledBorder: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(50.0),
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: Colors.black12,
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(50.0),
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: kPrimaryColor,
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                  ),
+                                ),
                               ),
                             ),
-                            child: TextField(
-                              onChanged: (value) {},
-                              decoration: kTextFieldDecoration.copyWith(
-                                hintText: 'Search location',
-                                enabledBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(50.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                    color: Colors.black12,
-                                    width: 3.0,
-                                  ),
-                                ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(50.0),
-                                  ),
-                                  borderSide: BorderSide(
-                                    color: kPrimaryColor,
-                                    width: 3.0,
-                                  ),
+                            Expanded(
+                              child: IconButton(
+                                iconSize: 30.0,
+                                onPressed: () {},
+                                color: kPrimaryColor,
+                                icon: const Icon(
+                                  Icons.search_outlined,
                                 ),
                               ),
-                              keyboardType: TextInputType.emailAddress,
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          iconSize: 30.0,
-                          onPressed: () {},
-                          color: kPrimaryColor,
-                          icon: const Icon(
-                            Icons.search_outlined,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -191,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class ParkingSpaceDetail extends StatelessWidget {
   ParkingSpaceDetail({super.key, required this.data});
 
-  dynamic data;
+  ParkingSpace data;
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +228,7 @@ class ParkingSpaceDetail extends StatelessWidget {
               height: 20.0,
             ),
             Text(
-              data.name,
+              data.name!,
               style: kTitleTextStyle,
             ),
             const SizedBox(
@@ -236,7 +247,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": RM ${data.parkingLayout.carPrice}",
+                  ": RM ${data.parkingLayout!.carPrice}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
@@ -253,7 +264,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": RM ${data.parkingLayout.motorcyclePrice}",
+                  ": RM ${data.parkingLayout!.motorcyclePrice}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
@@ -277,7 +288,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": ${data.parkingLayout.parkingSpot.where((c) => c.status == true && c.type == 2).length}",
+                  ": ${data.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 2).length}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
               ],
@@ -297,7 +308,7 @@ class ParkingSpaceDetail extends StatelessWidget {
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
                 Text(
-                  ": ${data.parkingLayout.parkingSpot.where((c) => c.status == true && c.type == 1).length}",
+                  ": ${data.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 1).length}",
                   style: kTextStyle.copyWith(fontSize: 13.0),
                 ),
               ],
@@ -319,7 +330,10 @@ class ParkingSpaceDetail extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         ParkingLayoutScreen.id,
-                        arguments: data.parkingLayout,
+                        arguments: {
+                          "parkingLayout": data.parkingLayout,
+                          "isEditable": false,
+                        },
                       );
                     },
                     style: const ButtonStyle(

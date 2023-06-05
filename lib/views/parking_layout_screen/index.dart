@@ -3,16 +3,36 @@ import 'package:provider/provider.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/parking_layout.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/models/parking_layout.dart';
 import 'package:psm_imam/providers/parking_layout_provider.dart';
 
-class ParkingLayoutScreen extends StatelessWidget {
+class ParkingLayoutScreen extends StatefulWidget {
   static String id = 'parking_layout_screen';
   const ParkingLayoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    dynamic args = ModalRoute.of(context)!.settings.arguments;
+  State<ParkingLayoutScreen> createState() => _ParkingLayoutScreenState();
+}
 
+class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
+  late ParkingLayout parkingLayout;
+  bool isEditable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      dynamic args = ModalRoute.of(context)!.settings.arguments;
+      setState(() {
+        parkingLayout = args['parkingLayout'];
+        isEditable = args['isEditable'];
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(isEditable);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -55,8 +75,9 @@ class ParkingLayoutScreen extends StatelessWidget {
                     style: kTextStyle,
                   ),
                   const SizedBox(height: 20.0),
-                  ParkingLayout(
-                    data: args,
+                  ParkingLayoutComponent(
+                    data: parkingLayout,
+                    isEditable: isEditable,
                   ),
                   const SizedBox(height: 20.0),
                   Row(
@@ -151,18 +172,20 @@ class ParkingLayoutScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20.0),
-                  Center(
-                    child: Consumer<ParkingLayoutProvider>(
-                      builder: (context, value, child) {
-                        return SubmitButton(
-                          title: 'Select',
-                          onPressed: () {
-                            Navigator.pop(context, value.selectedPosition);
-                          },
-                        );
-                      },
-                    ),
-                  ),
+                  isEditable
+                      ? Center(
+                          child: Consumer<ParkingLayoutProvider>(
+                            builder: (context, value, child) {
+                              return SubmitButton(
+                                title: 'Select',
+                                onPressed: () {
+                                  Navigator.pop(context, value);
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),

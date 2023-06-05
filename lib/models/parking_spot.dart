@@ -1,13 +1,13 @@
 class ParkingSpot {
-  String name, position, id;
-  int type;
-  bool status;
+  String? name, position, id;
+  int? type;
+  bool? status;
 
-  ParkingSpot(
+  ParkingSpot({
     this.id,
     this.name,
     this.position,
     this.type,
     this.status,
-  );
+  });
 }

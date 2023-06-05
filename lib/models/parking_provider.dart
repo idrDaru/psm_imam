@@ -1,16 +1,16 @@
 import 'package:psm_imam/models/user.dart';
 
 class ParkingProvider {
-  String name,
+  String? name,
       addressLineOne,
       addressLineTwo,
       city,
       stateProvince,
       country,
       postalCode;
-  User user;
+  User? user;
 
-  ParkingProvider(
+  ParkingProvider({
     this.name,
     this.addressLineOne,
     this.addressLineTwo,
@@ -19,5 +19,5 @@ class ParkingProvider {
     this.postalCode,
     this.stateProvince,
     this.user,
-  );
+  });
 }

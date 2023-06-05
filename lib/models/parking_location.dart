@@ -1,8 +1,8 @@
 class ParkingLocation {
-  double latitude, longitude;
+  double? latitude, longitude;
 
-  ParkingLocation(
+  ParkingLocation({
     this.latitude,
     this.longitude,
-  );
+  });
 }

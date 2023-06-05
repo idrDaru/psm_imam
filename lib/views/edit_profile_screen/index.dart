@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
+import 'package:provider/provider.dart';
+import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/models/parking_provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/services/networking.dart';
@@ -8,6 +11,8 @@ import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/view_models/edit_profile_view_model.dart';
+import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -22,27 +27,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Map<String, String> data = {};
   String confirmPassword = '';
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getEditProfileScreenData();
+    });
+  }
+
+  getEditProfileScreenData() async {
+    await Provider.of<EditProfileViewModel>(context, listen: false).getUser();
+  }
+
   handleSubmit() async {
     // if (confirmPassword != data['password']) {
     //   print("Password not same");
     // }
 
     // print("SAME PASSWORD: " + data.toString());
-    const storage = FlutterSecureStorage();
-    final key = await storage.read(key: 'access_token');
 
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $key',
-    };
-
-    NetworkHelper networkHelper = NetworkHelper(
-      endpoint: '/api/user/',
-      header: header,
-      body: data,
-    );
-
-    var response = await networkHelper.putData();
+    Response response =
+        await Provider.of<EditProfileViewModel>(context, listen: false)
+            .handleSubmitEditProfile(data);
     var decodeResponse = jsonDecode(response.body);
     if (decodeResponse['status'] == 200) {
       // ignore: use_build_context_synchronously
@@ -54,8 +60,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    dynamic user = ModalRoute.of(context)!.settings.arguments;
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -74,107 +78,119 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           leadingWidth: 100.0,
         ),
         extendBodyBehindAppBar: true,
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Header(title: 'Edit Profile'),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 50.0,
-                    right: 50.0,
-                    bottom: 50.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 50.0,
-                        backgroundImage: NetworkImage(
-                          user.user.imageDownloadURL,
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
-                      SubmitButton(title: 'Change Photo', onPressed: () {}),
-                      const SizedBox(height: 50.0),
-                      ShadowTextField(
-                        (value) {
-                          user is ParkingUser
-                              ? data['first_name'] = value
-                              : data['name'] = value;
-                        },
-                        title: user is ParkingUser
-                            ? user.firstName
-                            : user is ParkingProvider
-                                ? user.name
-                                : "",
-                      ),
-                      user is ParkingUser
-                          ? ShadowTextField(
-                              (value) => data['last_name'] = value,
-                              title: user.lastName,
-                            )
-                          : Container(),
-                      user is ParkingProvider
-                          ? ShadowTextField(
-                              (value) => data['address_line_one'] = value,
-                              title: user.addressLineOne,
-                            )
-                          : Container(),
-                      user is ParkingProvider
-                          ? ShadowTextField(
-                              (value) => data['address_line_two'] = value,
-                              title: user.addressLineTwo,
-                            )
-                          : Container(),
-                      user is ParkingProvider
-                          ? ShadowTextField(
-                              (value) => data['state_province'] = value,
-                              title: user.stateProvince,
-                            )
-                          : Container(),
-                      user is ParkingProvider
-                          ? ShadowTextField(
-                              (value) => data['country'] = value,
-                              title: user.country,
-                            )
-                          : Container(),
-                      user is ParkingProvider
-                          ? ShadowTextField(
-                              (value) => data['postal_code'] = value,
-                              title: user.postalCode,
-                            )
-                          : Container(),
-                      ShadowTextField(
-                        (value) => data['email'] = value,
-                        title: user is ParkingUser
-                            ? user.user.email
-                            : user is ParkingProvider
-                                ? user.user.email
-                                : "",
-                      ),
-                      ShadowTextField((value) => data['password'] = value,
-                          title: "************"),
-                      ShadowTextField((value) => confirmPassword = value,
-                          title: "************"),
-                      const SizedBox(height: 20.0),
-                      SubmitButton(
-                        title: 'Save',
-                        onPressed: () {
-                          handleSubmit();
-                        },
-                      ),
-                    ],
-                  ),
+        body: Provider.of<EditProfileViewModel>(context).isLoading
+            ? const LoadingScreen()
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Header(title: 'Edit Profile'),
+                    Center(
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 50.0,
+                            right: 50.0,
+                            bottom: 50.0,
+                          ),
+                          child: Consumer<EditProfileViewModel>(
+                            builder: (context, value, child) {
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 50.0,
+                                    backgroundImage: NetworkImage(
+                                      value.user.user.imageDownloadURL,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8.0),
+                                  SubmitButton(
+                                      title: 'Change Photo', onPressed: () {}),
+                                  const SizedBox(height: 50.0),
+                                  ShadowTextField(
+                                    (newValue) {
+                                      value.user is ParkingUser
+                                          ? data['first_name'] = newValue
+                                          : data['name'] = newValue;
+                                    },
+                                    title: value.user is ParkingUser
+                                        ? value.user.firstName
+                                        : value.user is ParkingProvider
+                                            ? value.user.name
+                                            : "",
+                                  ),
+                                  value.user is ParkingUser
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['last_name'] = newValue,
+                                          title: value.user.lastName,
+                                        )
+                                      : Container(),
+                                  value.user is ParkingProvider
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['address_line_one'] =
+                                                  newValue,
+                                          title: value.user.addressLineOne,
+                                        )
+                                      : Container(),
+                                  value.user is ParkingProvider
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['address_line_two'] =
+                                                  newValue,
+                                          title: value.user.addressLineTwo,
+                                        )
+                                      : Container(),
+                                  value.user is ParkingProvider
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['state_province'] = newValue,
+                                          title: value.user.stateProvince,
+                                        )
+                                      : Container(),
+                                  value.user is ParkingProvider
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['country'] = newValue,
+                                          title: value.user.country,
+                                        )
+                                      : Container(),
+                                  value.user is ParkingProvider
+                                      ? ShadowTextField(
+                                          (newValue) =>
+                                              data['postal_code'] = newValue,
+                                          title: value.user.postalCode,
+                                        )
+                                      : Container(),
+                                  ShadowTextField(
+                                    (newValue) => data['email'] = newValue,
+                                    title: value.user.user.email,
+                                  ),
+                                  ShadowTextField(
+                                      (newValue) => data['password'] = newValue,
+                                      title: "************"),
+                                  ShadowTextField(
+                                      (newValue) => confirmPassword = newValue,
+                                      title: "************"),
+                                  const SizedBox(height: 20.0),
+                                  SubmitButton(
+                                    title: 'Save',
+                                    onPressed: () {
+                                      handleSubmit();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          )),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
       ),
     );
   }

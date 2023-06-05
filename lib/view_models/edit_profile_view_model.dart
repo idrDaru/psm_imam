@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/models/booking.dart';
+import 'package:http/http.dart';
 import 'package:psm_imam/models/user.dart';
 
-class ManageBookingViewModel extends ChangeNotifier {
+class EditProfileViewModel extends ChangeNotifier {
   dynamic _user;
-  List<Booking>? _bookingList;
   bool isLoading = false;
 
   dynamic get user => _user;
-  dynamic get bookingList => _bookingList;
 
   Future<void> getUser() async {
     isLoading = true;
@@ -21,14 +19,16 @@ class ManageBookingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUserBooking() async {
+  Future<Response> handleSubmitEditProfile(Map<String, String> data) async {
     isLoading = true;
     notifyListeners();
 
-    Booking booking = Booking();
-    _bookingList = await booking.getUserBooking();
+    User user = User();
+    Response response = await user.updateUser(data);
 
     isLoading = false;
     notifyListeners();
+
+    return response;
   }
 }

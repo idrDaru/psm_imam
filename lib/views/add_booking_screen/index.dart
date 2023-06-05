@@ -19,8 +19,10 @@ class AddBookingScreen extends StatefulWidget {
 }
 
 class _AddBookingScreenState extends State<AddBookingScreen> {
-  dynamic selectedPosition;
+  dynamic parkingLayout;
   late String parkingSpaceId;
+  late double carPrice, motorcyclePrice;
+  late bool isParkingLayoutEmpty = false;
 
   handleSubmit() async {
     AddBookingViewModel addBookingViewModel = AddBookingViewModel();
@@ -43,13 +45,20 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
       'time_from': timeFrom.toString(),
       'time_to': timeTo.toString(),
       'parking_space_id': parkingSpaceId,
-      'total_car': 1,
-      'total_motorcycle': 1,
-      'total_price': 1.1,
-      'parking_spot': selectedPosition.toList(),
+      'total_car': parkingLayout.carCount,
+      'total_motorcycle': parkingLayout.motorcycleCount,
+      'total_price': (parkingLayout.carCount * carPrice) +
+          (parkingLayout.motorcycleCount * motorcyclePrice),
+      'parking_spot': parkingLayout.selectedPosition.toList(),
     };
 
-    addBookingViewModel.submitAddBooking(context, data);
+    if (!parkingLayout.selectedPosition.isEmpty) {
+      addBookingViewModel.submitAddBooking(context, data);
+    }
+
+    setState(() {
+      isParkingLayoutEmpty = !isParkingLayoutEmpty;
+    });
   }
 
   @override
@@ -313,11 +322,16 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                   final result = await Navigator.pushNamed(
                     context,
                     ParkingLayoutScreen.id,
-                    arguments: args.parkingLayout,
+                    arguments: {
+                      "parkingLayout": args.parkingLayout,
+                      "isEditable": true,
+                    },
                   );
                   setState(() {
                     parkingSpaceId = args.id.toString();
-                    selectedPosition = result;
+                    carPrice = args.parkingLayout.carPrice;
+                    motorcyclePrice = args.parkingLayout.motorcyclePrice;
+                    parkingLayout = result;
                   });
                 },
                 style: const ButtonStyle(
@@ -336,6 +350,9 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                   ),
                 ),
               ),
+              isParkingLayoutEmpty
+                  ? const Text("Please select parking layout")
+                  : const SizedBox.shrink(),
               const SizedBox(height: 50.0),
               SubmitButton(
                 title: 'Save',

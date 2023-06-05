@@ -1,24 +1,32 @@
+// ignore_for_file: prefer_const_constructors_in_immutables, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/models/parking_layout.dart';
 import 'package:psm_imam/providers/parking_layout_provider.dart';
 
-class ParkingLayout extends StatefulWidget {
-  ParkingLayout({super.key, required this.data});
+class ParkingLayoutComponent extends StatefulWidget {
+  ParkingLayoutComponent({
+    super.key,
+    required this.data,
+    required this.isEditable,
+  });
 
-  final dynamic data;
+  final ParkingLayout data;
+  final bool isEditable;
 
   @override
-  State<ParkingLayout> createState() => _ParkingLayoutState();
+  State<ParkingLayoutComponent> createState() => _ParkingLayoutComponentState();
 }
 
-class _ParkingLayoutState extends State<ParkingLayout> {
+class _ParkingLayoutComponentState extends State<ParkingLayoutComponent> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<ParkingLayoutProvider>(context, listen: false)
-          .handleData(widget.data);
+          .handleData(widget.data, widget.isEditable);
     });
   }
 
@@ -79,16 +87,14 @@ class _ParkingLayoutState extends State<ParkingLayout> {
 class ParkingLayoutButton extends StatefulWidget {
   ParkingLayoutButton({
     super.key,
-    required this.type,
-    required this.isAvailable,
-    required this.id,
     required this.callback,
+    required this.data,
+    required this.isEditable,
   });
 
-  int type;
-  bool isAvailable;
-  String id;
-  Function(String) callback;
+  Function(dynamic) callback;
+  dynamic data;
+  bool isEditable;
 
   @override
   State<ParkingLayoutButton> createState() => _ParkingLayoutButtonState();
@@ -100,22 +106,23 @@ class _ParkingLayoutButtonState extends State<ParkingLayoutButton> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.type == 1 ? 20 : 100,
-      height: widget.type == 1 ? 50 : 40,
-      margin:
-          widget.type == 1 ? null : const EdgeInsets.symmetric(vertical: 5.0),
+      width: widget.data.type == 1 ? 20 : 100,
+      height: widget.data.type == 1 ? 50 : 40,
+      margin: widget.data.type == 1
+          ? null
+          : const EdgeInsets.symmetric(vertical: 5.0),
       child: ElevatedButton(
         onPressed: () {
-          widget.isAvailable
+          widget.data.status && widget.isEditable
               ? setState(() {
                   isSelected = !isSelected;
                 })
               : null;
-          widget.isAvailable ? widget.callback(widget.id) : null;
+          widget.data.status ? widget.callback(widget.data) : null;
         },
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll<Color>(
-            widget.isAvailable
+            widget.data.status
                 ? isSelected
                     ? Colors.blue.shade300
                     : kSecondaryColor

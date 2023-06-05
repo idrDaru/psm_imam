@@ -10,6 +10,7 @@ class PaymentMethodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic args = ModalRoute.of(context)!.settings.arguments;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -53,7 +54,11 @@ class PaymentMethodScreen extends StatelessWidget {
                 const SizedBox(height: 50.0),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, PaymentScreen.id);
+                    Navigator.pushNamed(
+                      context,
+                      PaymentScreen.id,
+                      arguments: args,
+                    );
                   },
                   style: const ButtonStyle(
                     backgroundColor:
@@ -113,7 +118,11 @@ class PaymentMethodScreen extends StatelessWidget {
                 const SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, PaymentScreen.id);
+                    Navigator.pushNamed(
+                      context,
+                      PaymentScreen.id,
+                      arguments: args,
+                    );
                   },
                   style: const ButtonStyle(
                     backgroundColor:
@@ -180,7 +189,11 @@ class PaymentMethodScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, PaymentScreen.id);
+                    Navigator.pushNamed(
+                      context,
+                      PaymentScreen.id,
+                      arguments: args,
+                    );
                   },
                   child: Container(
                     height: 80.0,

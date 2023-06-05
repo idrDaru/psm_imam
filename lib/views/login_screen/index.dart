@@ -2,14 +2,14 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/view_models/login_view_model.dart';
 import 'package:psm_imam/views/home_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
-import 'package:psm_imam/services/networking.dart';
 
 class LoginScreen extends StatefulWidget {
   static String id = 'login_screen';
@@ -21,29 +21,19 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isChecked = false;
-  String email = '', password = '';
+  Map<String, String> data = {
+    'email': '',
+    'password': '',
+  };
 
   submitForm() async {
-    const storage = FlutterSecureStorage();
+    LoginViewModel loginViewModel = LoginViewModel();
 
-    Map<String, String> data = {
-      'email': email,
-      'password': password,
-    };
+    Response response = await loginViewModel.submitLogin(data);
 
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-    };
-
-    NetworkHelper networkHelper = NetworkHelper(
-      endpoint: '/api/login/',
-      header: header,
-      body: data,
-    );
-    var response = await networkHelper.postData();
     var decodeResponse = jsonDecode(response.body);
     if (decodeResponse['status'] == 200) {
-      await storage.write(
+      await loginViewModel.storage.write(
         key: 'access_token',
         value: decodeResponse['data']['access_token'],
       );
@@ -80,10 +70,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ShadowTextField((value) {
-                        return email = value;
+                        return data['email'] = value;
                       }, title: 'Email Address'),
                       ShadowTextField((value) {
-                        return password = value;
+                        return data['password'] = value;
                       }, title: 'Password'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

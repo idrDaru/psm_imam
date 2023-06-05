@@ -2,12 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:psm_imam/providers/booking_provider.dart';
-import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/components/loading.dart';
+import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/sidebar.dart';
+import 'package:psm_imam/view_models/manage_booking_view_model.dart';
 import 'package:psm_imam/views/edit_booking_screen/index.dart';
+import 'package:psm_imam/views/parking_layout_screen/index.dart';
 import 'package:psm_imam/views/parking_location_screen/index.dart';
 import 'package:psm_imam/views/payment_method_screen/index.dart';
 
@@ -20,22 +22,24 @@ class ManageBookingScreen extends StatefulWidget {
 }
 
 class _ManageBookingScreenState extends State<ManageBookingScreen> {
-  dynamic _data;
+  List<Booking>? bookingList;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timestamp) {
-      Provider.of<UserProvider>(context, listen: false).getUserData();
       getUserBooking();
     });
   }
 
   getUserBooking() async {
-    await Provider.of<BookingProvider>(context, listen: false).getUserBooking();
+    await Provider.of<ManageBookingViewModel>(context, listen: false).getUser();
+    await Provider.of<ManageBookingViewModel>(context, listen: false)
+        .getUserBooking();
 
-    var tmp = Provider.of<BookingProvider>(context, listen: false).booking;
     setState(() {
-      _data = tmp;
+      bookingList = Provider.of<ManageBookingViewModel>(context, listen: false)
+          .bookingList;
     });
   }
 
@@ -44,34 +48,30 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        drawer: Consumer<UserProvider>(builder: (context, value, child) {
-          return const Sidebar();
-        }),
+        drawer: const Sidebar(),
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: kPrimaryColor),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              const Header(title: 'My Booking'),
-              const SizedBox(height: 20.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                ),
-                child: Provider.of<BookingProvider>(context).isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : ListView.builder(
+        body: Provider.of<ManageBookingViewModel>(context).isLoading
+            ? const LoadingScreen()
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    const Header(title: 'My Booking'),
+                    const SizedBox(height: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                      ),
+                      child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: _data.length,
+                        itemCount: bookingList!.length,
                         itemBuilder: (context, index) {
-                          var parkingSpace = _data[index].parkingSpace;
+                          var parkingSpace = bookingList![index].parkingSpace;
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 5.0),
                             height: 340.0,
@@ -108,14 +108,25 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                               child: CircleAvatar(
                                                 radius: 40.0,
                                                 backgroundImage: NetworkImage(
-                                                  parkingSpace.imageDownloadUrl,
-                                                  // 'https://cdn-icons-png.flaticon.com/512/194/194938.png',
+                                                  parkingSpace!.imageDownloadUrl
+                                                      .toString(),
                                                 ),
                                               ),
                                             ),
                                             const SizedBox(height: 20.0),
                                             ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  ParkingLayoutScreen.id,
+                                                  arguments: {
+                                                    "parkingLayout":
+                                                        parkingSpace
+                                                            .parkingLayout,
+                                                    "isEditable": false,
+                                                  },
+                                                );
+                                              },
                                               style: const ButtonStyle(
                                                 backgroundColor:
                                                     MaterialStatePropertyAll<
@@ -165,7 +176,7 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              parkingSpace.name,
+                                              parkingSpace.name.toString(),
                                               style: kTitleTextStyle.copyWith(
                                                 fontWeight: FontWeight.normal,
                                               ),
@@ -173,7 +184,6 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                             const SizedBox(height: 20.0),
                                             Text(
                                               '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo}, ${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
-                                              // 'Fakulti Alam Bina dan Ukur, Lingkaran Ilmu, Universiti Teknologi Malaysia, 81310 Johor Bahru, Johor, Malaysia',
                                               style: kTextStyle.copyWith(
                                                 fontSize: 11.0,
                                               ),
@@ -199,7 +209,7 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      'Car Space : ${_data[index].totalCar.toString()}',
+                                                      'Car Space : ${bookingList![index].totalCar.toString()}',
                                                       style:
                                                           kTextStyle.copyWith(
                                                         fontSize: 11.0,
@@ -207,28 +217,21 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                     ),
                                                     const SizedBox(height: 5.0),
                                                     Text(
-                                                      'Motorcycle Space : ${_data[index].totalMotorcycle.toString()}',
+                                                      'Motorcycle Space : ${bookingList![index].totalMotorcycle.toString()}',
                                                       style:
                                                           kTextStyle.copyWith(
                                                         fontSize: 11.0,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 5.0),
-                                                    // Text(
-                                                    //   'Parking Layout : 87',
-                                                    //   style:
-                                                    //       kTextStyle.copyWith(
-                                                    //     fontSize: 11.0,
-                                                    //   ),
-                                                    // ),
-                                                    // const SizedBox(height: 5.0),
                                                   ],
                                                 ),
                                                 Text(
-                                                  'Total Price : RM ${_data[index].totalPrice.toString()}',
+                                                  'Total Price : RM ${bookingList![index].totalPrice.toString()}',
                                                   style: kTextStyle.copyWith(
-                                                      color: kPrimaryColor,
-                                                      fontSize: 11.0),
+                                                    color: kPrimaryColor,
+                                                    fontSize: 11.0,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -253,17 +256,25 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                         child: Text(
                                           'Cancel',
                                           style: kTextStyle.copyWith(
-                                              fontSize: 12.0),
+                                            color:
+                                                bookingList![index].isPurchased!
+                                                    ? Colors.grey
+                                                    : Colors.black,
+                                            fontSize: 12.0,
+                                          ),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            EditBookingScreen.id,
-                                            arguments: _data[index],
-                                          );
+                                          bookingList![index].isPurchased!
+                                              ? null
+                                              : Navigator.pushNamed(
+                                                  context,
+                                                  EditBookingScreen.id,
+                                                  arguments:
+                                                      bookingList![index],
+                                                );
                                         },
                                         style: const ButtonStyle(
                                           backgroundColor:
@@ -274,6 +285,10 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                         child: Text(
                                           'Edit Booking',
                                           style: kTextStyle.copyWith(
+                                            color:
+                                                bookingList![index].isPurchased!
+                                                    ? Colors.grey
+                                                    : Colors.black,
                                             fontSize: 12.0,
                                           ),
                                           textAlign: TextAlign.center,
@@ -281,21 +296,32 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            PaymentMethodScreen.id,
-                                          );
+                                          bookingList![index].isPurchased!
+                                              ? null
+                                              : Navigator.pushNamed(
+                                                  context,
+                                                  PaymentMethodScreen.id,
+                                                  arguments:
+                                                      bookingList![index],
+                                                );
                                         },
-                                        style: const ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStatePropertyAll<Color>(
-                                            kPrimaryColor,
-                                          ),
+                                        style: ButtonStyle(
+                                          backgroundColor: bookingList![index]
+                                                  .isPurchased!
+                                              ? const MaterialStatePropertyAll<
+                                                  Color>(kSecondaryColor)
+                                              : const MaterialStatePropertyAll<
+                                                  Color>(kPrimaryColor),
                                         ),
                                         child: Text(
-                                          'Pay',
+                                          bookingList![index].isPurchased!
+                                              ? 'Paid'
+                                              : 'Pay',
                                           style: kTextStyle.copyWith(
-                                            color: Colors.white,
+                                            color:
+                                                bookingList![index].isPurchased!
+                                                    ? Colors.grey
+                                                    : Colors.white,
                                           ),
                                           textAlign: TextAlign.center,
                                         ),
@@ -308,11 +334,11 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                           );
                         },
                       ),
+                    ),
+                    const SizedBox(height: 20.0),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20.0),
-            ],
-          ),
-        ),
       ),
     );
   }

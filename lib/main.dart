@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:psm_imam/providers/booking_provider.dart';
-import 'package:psm_imam/providers/parking_space_provider.dart';
 import 'package:psm_imam/providers/time_provider.dart';
-import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/view_models/edit_profile_view_model.dart';
+import 'package:psm_imam/view_models/home_view_model.dart';
+import 'package:psm_imam/view_models/manage_booking_view_model.dart';
+import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
 import 'package:psm_imam/views/edit_booking_screen/index.dart';
@@ -13,6 +14,7 @@ import 'package:psm_imam/views/home_screen/index.dart';
 import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/manage_booking_screen/index.dart';
 import 'package:psm_imam/views/manage_parking_space_screen/index.dart';
+import 'package:psm_imam/views/mock_external_payment_screen.index.dart';
 import 'package:psm_imam/views/parking_layout_screen/index.dart';
 import 'package:psm_imam/views/parking_location_screen/index.dart';
 import 'package:psm_imam/views/payment_form_screen/index.dart';
@@ -54,22 +56,12 @@ class MyApp extends StatelessWidget {
         ParkingLocationScreen.id: (context) => const ParkingLocationScreen(),
 
         // ACCOUNT MANAGEMENT ROUTES
-        ProfileScreen.id: (context) => MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                  create: (context) => UserProvider(),
-                ),
-                ChangeNotifierProvider(
-                  create: (context) => ParkingSpaceProvider(),
-                ),
-                ChangeNotifierProvider(
-                  create: (context) => BookingProvider(),
-                )
-              ],
+        ProfileScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ProfileViewModel(),
               child: const ProfileScreen(),
             ),
         EditProfileScreen.id: (context) => ChangeNotifierProvider(
-              create: (context) => UserProvider(),
+              create: (context) => EditProfileViewModel(),
               child: const EditProfileScreen(),
             ),
 
@@ -78,15 +70,8 @@ class MyApp extends StatelessWidget {
               create: (context) => TimeProvider(),
               child: const AddBookingScreen(),
             ),
-        ManageBookingScreen.id: (context) => MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                  create: (context) => UserProvider(),
-                ),
-                ChangeNotifierProvider(
-                  create: (context) => BookingProvider(),
-                ),
-              ],
+        ManageBookingScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ManageBookingViewModel(),
               child: const ManageBookingScreen(),
             ),
         EditBookingScreen.id: (context) => const EditBookingScreen(),
@@ -95,15 +80,12 @@ class MyApp extends StatelessWidget {
         PaymentFormScreen.id: (context) => const PaymentFormScreen(),
         PaymentMethodScreen.id: (context) => const PaymentMethodScreen(),
         PaymentScreen.id: (context) => const PaymentScreen(),
+        MockExternalPaymentScreen.id: (context) =>
+            const MockExternalPaymentScreen(),
 
         // HOME SCREEN
-        HomeScreen.id: (context) => MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                  create: (context) => ParkingSpaceProvider(),
-                ),
-                ChangeNotifierProvider(create: (context) => UserProvider()),
-              ],
+        HomeScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => HomeViewModel(),
               child: const HomeScreen(),
             ),
       },

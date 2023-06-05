@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/submit_button.dart';
-import 'package:psm_imam/views/payment_form_screen/index.dart';
+import 'package:psm_imam/views/mock_external_payment_screen.index.dart';
 
 class PaymentScreen extends StatelessWidget {
   static String id = 'payment_screen';
@@ -9,6 +9,7 @@ class PaymentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic args = ModalRoute.of(context)!.settings.arguments;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -63,7 +64,7 @@ class PaymentScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Parking Space Name: ',
+                            'Parking Space Name: ${args.parkingSpace.name}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -71,7 +72,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Time From: ',
+                            'Time From: ${args.timeFrom.toString()}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -79,7 +80,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Time To: ',
+                            'Time To: ${args.timeTo.toString()}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -87,7 +88,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Total Car: ',
+                            'Total Car: ${args.totalCar.toString()}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -95,7 +96,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Total Motorcycle: ',
+                            'Total Motorcycle: ${args.totalMotorcycle.toString()}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -103,7 +104,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Total Price: ',
+                            'Total Price: RM ${args.totalPrice.toString()}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,
@@ -119,7 +120,11 @@ class PaymentScreen extends StatelessWidget {
                   child: SubmitButton(
                     title: 'Pay',
                     onPressed: () {
-                      Navigator.pushNamed(context, PaymentFormScreen.id);
+                      Navigator.pushNamed(
+                        context,
+                        MockExternalPaymentScreen.id,
+                        arguments: args,
+                      );
                     },
                   ),
                 ),

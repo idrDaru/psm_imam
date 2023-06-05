@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:psm_imam/view_models/user.dart';
+import 'package:psm_imam/models/user.dart';
 
 class UserProvider extends ChangeNotifier {
   dynamic _user;
@@ -7,11 +7,13 @@ class UserProvider extends ChangeNotifier {
 
   dynamic get user => _user;
 
-  Future<void> getUserData() async {
+  Future<void> getUser() async {
     isLoading = true;
     notifyListeners();
-    var userViewModel = UserViewModel();
-    _user = await userViewModel.getUserData();
+
+    User user = User();
+    _user = await user.getUser();
+
     isLoading = false;
     notifyListeners();
   }

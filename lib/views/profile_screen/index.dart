@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/components/loading.dart';
+import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/models/parking_user.dart';
-import 'package:psm_imam/providers/booking_provider.dart';
-import 'package:psm_imam/providers/parking_space_provider.dart';
-import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/sidebar.dart';
+import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/edit_profile_screen/index.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,8 +21,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Map<String, List<dynamic>> datas = {};
-  List<ParkingSpace> parkingSpaces = [];
-  dynamic _data;
+  List<ParkingSpace>? parkingSpaceList;
+  List<Booking>? bookingList;
+  dynamic user;
 
   String count1 = "0", count2 = "0";
 
@@ -30,31 +31,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timestamp) {
-      fetchProfileData();
+      getProfileScreenData();
     });
   }
 
-  void fetchProfileData() async {
-    await Provider.of<UserProvider>(context, listen: false).getUserData();
+  getProfileScreenData() async {
+    await Provider.of<ProfileViewModel>(context, listen: false).getUserData();
+    if (Provider.of<ProfileViewModel>(context, listen: false).user
+        is ParkingUser) {
+      await Provider.of<ProfileViewModel>(context, listen: false)
+          .getBookingList();
 
-    if (Provider.of<UserProvider>(context, listen: false).user is ParkingUser) {
-      await Provider.of<BookingProvider>(context, listen: false)
-          .getUserBooking();
-
-      _data = Provider.of<BookingProvider>(context, listen: false).booking;
       setState(() {
-        count1 = _data.where((c) => c.isPurchased == false).length.toString();
-        count2 = _data.where((c) => c.isPurchased == true).length.toString();
+        bookingList =
+            Provider.of<ProfileViewModel>(context, listen: false).bookingList;
+        count1 = bookingList!
+            .where((element) => element.isPurchased == false)
+            .length
+            .toString();
+        count2 = bookingList!
+            .where((element) => element.isPurchased == true)
+            .length
+            .toString();
       });
     } else {
-      await Provider.of<ParkingSpaceProvider>(context, listen: false)
-          .getProviderParkingSpaceData();
+      await Provider.of<ProfileViewModel>(context).getParkingSpaceList();
 
-      _data = Provider.of<ParkingSpaceProvider>(context, listen: false)
-          .parkingSpace;
       setState(() {
-        count1 = _data.length.toString();
-        count2 = _data.where((c) => c.isActive == false).length.toString();
+        parkingSpaceList = Provider.of<ProfileViewModel>(context, listen: false)
+            .parkingSpaceList;
+        count1 = parkingSpaceList!.length.toString();
+        count2 = parkingSpaceList!
+            .where((element) => element.isActive == false)
+            .length
+            .toString();
       });
     }
   }
@@ -65,25 +75,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        drawer: Consumer<UserProvider>(builder: (context, value, child) {
-          return const Sidebar();
-        }),
+        drawer: const Sidebar(),
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: kPrimaryColor),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        body: ListView(
-          padding: const EdgeInsets.only(top: 0),
-          children: [
-            Provider.of<UserProvider>(context).isLoading ||
-                    Provider.of<BookingProvider>(context).isLoading ||
-                    Provider.of<ParkingSpaceProvider>(context).isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Stack(
+        body: Provider.of<ProfileViewModel>(context).isLoading
+            ? const LoadingScreen()
+            : ListView(
+                padding: const EdgeInsets.only(top: 0),
+                children: [
+                  Stack(
                     children: [
                       const ProfileHeader(),
                       Padding(
@@ -96,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             Center(
-                              child: Consumer<UserProvider>(
+                              child: Consumer<ProfileViewModel>(
                                 builder: (context, value, child) {
                                   return Text(
                                     value.user is ParkingUser
@@ -115,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Consumer<UserProvider>(
+                                  Consumer<ProfileViewModel>(
                                     builder: (context, value, child) {
                                       return CircleAvatar(
                                         radius: 50.0,
@@ -127,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   const SizedBox(width: 20.0),
                                   Flexible(
-                                    child: Consumer<UserProvider>(
+                                    child: Consumer<ProfileViewModel>(
                                       builder: (context, value, child) {
                                         return Text(
                                           value.user is ParkingUser
@@ -152,13 +156,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: kPrimaryColor,
                                       ),
                                     ),
-                                    Consumer<UserProvider>(
+                                    Consumer<ProfileViewModel>(
                                         builder: (context, value, child) {
-                                      if (value.isLoading) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
                                       return Text(
                                         value.user is ParkingUser
                                             ? 'Waiting for Payment'
@@ -177,13 +176,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: kPrimaryColor,
                                       ),
                                     ),
-                                    Consumer<UserProvider>(
+                                    Consumer<ProfileViewModel>(
                                         builder: (context, value, child) {
-                                      if (value.isLoading) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
                                       return Text(
                                         value.user is ParkingUser
                                             ? 'Upcoming Parking'
@@ -199,10 +193,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Navigator.pushNamed(
                                       context,
                                       EditProfileScreen.id,
-                                      arguments: Provider.of<UserProvider>(
-                                        context,
-                                        listen: false,
-                                      ).user,
                                     );
                                   },
                                   style: kSendButtonStyle.copyWith(
@@ -235,21 +225,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             vertical: 30.0,
                             horizontal: 20.0,
                           ),
-                          child: Consumer<UserProvider>(
+                          child: Consumer<ProfileViewModel>(
                             builder: (context, value, child) {
-                              Widget result;
-                              value.user is ParkingUser
-                                  ? result = ParkingUserScrolledRow(data: _data)
-                                  : result = ProviderScrolledRow(data: _data);
-                              return result;
+                              return value.user is ParkingUser
+                                  ? ParkingUserScrolledRow(
+                                      bookingList: bookingList,
+                                    )
+                                  : ProviderScrolledRow(
+                                      parkingSpaceList: parkingSpaceList,
+                                    );
                             },
                           ),
                         ),
                       ),
                     ],
                   ),
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }
@@ -275,20 +267,20 @@ class ProfileHeader extends StatelessWidget {
 }
 
 class ProviderScrolledRow extends StatelessWidget {
-  const ProviderScrolledRow({super.key, required this.data});
+  const ProviderScrolledRow({super.key, required this.parkingSpaceList});
 
-  final dynamic data;
+  final List<ParkingSpace>? parkingSpaceList;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TitledScrolledRow(
-          data: data.where((c) => c.isActive == true).toList(),
+          data: parkingSpaceList!.where((c) => c.isActive == true).toList(),
           title: "My Parking Space",
         ),
         TitledScrolledRow(
-          data: data.where((c) => c.isActive == false).toList(),
+          data: parkingSpaceList!.where((c) => c.isActive == false).toList(),
           title: "Deactivated Parking Spaces",
         ),
       ],
@@ -297,13 +289,13 @@ class ProviderScrolledRow extends StatelessWidget {
 }
 
 class ParkingUserScrolledRow extends StatelessWidget {
-  const ParkingUserScrolledRow({super.key, required this.data});
-  final dynamic data;
+  const ParkingUserScrolledRow({super.key, required this.bookingList});
+  final List<Booking>? bookingList;
 
   List<dynamic> filterUpcomingParking() {
     List<dynamic> result = [];
 
-    List tmpResult = data.where((c) => c.isPurchased == true).toList();
+    List tmpResult = bookingList!.where((c) => c.isPurchased == true).toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
@@ -314,7 +306,7 @@ class ParkingUserScrolledRow extends StatelessWidget {
   List<dynamic> filterWaitingForPayment() {
     List<dynamic> result = [];
 
-    List tmpResult = data.where((c) => c.isPurchased == false).toList();
+    List tmpResult = bookingList!.where((c) => c.isPurchased == false).toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
@@ -325,7 +317,7 @@ class ParkingUserScrolledRow extends StatelessWidget {
   List<dynamic> filterHistoryParking() {
     List<dynamic> result = [];
 
-    List tmpResult = data.toList();
+    List tmpResult = bookingList!.toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
