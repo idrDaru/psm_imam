@@ -197,7 +197,7 @@ class ParkingSpaceDetail extends StatelessWidget {
       padding: const EdgeInsets.all(0.0),
       child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 2.8,
+          height: MediaQuery.of(context).size.height / 2.3,
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
@@ -223,44 +223,78 @@ class ParkingSpaceDetail extends StatelessWidget {
                   const SizedBox(
                     height: 5.0,
                   ),
-                  Text(
-                    '${value.parkingSpaceDetail!.addressLineOne}, ${value.parkingSpaceDetail!.addressLineTwo}, ${value.parkingSpaceDetail!.postalCode} ${value.parkingSpaceDetail!.city}, ${value.parkingSpaceDetail!.stateProvince}, ${value.parkingSpaceDetail!.country}',
-                    style: kTextStyle.copyWith(fontSize: 13.0),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                    child: Text(
+                      '${value.parkingSpaceDetail!.addressLineOne}, ${value.parkingSpaceDetail!.addressLineTwo == null || value.parkingSpaceDetail!.addressLineTwo == "" ? "" : "${value.parkingSpaceDetail!.addressLineTwo!},"} ${value.parkingSpaceDetail!.postalCode} ${value.parkingSpaceDetail!.city}, ${value.parkingSpaceDetail!.stateProvince}, ${value.parkingSpaceDetail!.country}',
+                      style: kTextStyle.copyWith(
+                        fontSize: 13.0,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 20.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Car",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        ": RM ${value.parkingSpaceDetail!.parkingLayout!.carPrice}",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        "Per Hour",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 60.0,
+                      vertical: 3.0,
+                    ),
+                    child: Table(
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        TableRow(
+                          children: [
+                            Text(
+                              "Car",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              ": RM ${value.parkingSpaceDetail!.parkingLayout!.carPrice}",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              "Per Hour",
+                              style: kTextStyle.copyWith(
+                                fontSize: 13.0,
+                                color: kSecondaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Motorcycle",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        ": RM ${value.parkingSpaceDetail!.parkingLayout!.motorcyclePrice}",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        "Per Hour",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 60.0, vertical: 3.0),
+                    child: Table(
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        TableRow(
+                          children: [
+                            Text(
+                              "Motorcycle",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              ": RM ${value.parkingSpaceDetail!.parkingLayout!.motorcyclePrice}",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              "Per Hour",
+                              style: kTextStyle.copyWith(
+                                fontSize: 13.0,
+                                color: kSecondaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -269,18 +303,26 @@ class ParkingSpaceDetail extends StatelessWidget {
                       color: kSecondaryColor,
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Empty Car Space",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        ": ${value.parkingSpaceDetail!.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 2).length}",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 60.0, vertical: 3.0),
+                    child: Table(
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        TableRow(
+                          children: [
+                            Text(
+                              "Empty Car Space",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              ": ${value.parkingSpaceDetail!.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 2).length}",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -289,18 +331,26 @@ class ParkingSpaceDetail extends StatelessWidget {
                       color: kSecondaryColor,
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Empty Motorcycle Space",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                      Text(
-                        ": ${value.parkingSpaceDetail!.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 1).length}",
-                        style: kTextStyle.copyWith(fontSize: 13.0),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 60.0, vertical: 3.0),
+                    child: Table(
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        TableRow(
+                          children: [
+                            Text(
+                              "Empty Motorcycle Space",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                            Text(
+                              ": ${value.parkingSpaceDetail!.parkingLayout!.parkingSpot!.where((c) => c.status == true && c.type == 1).length}",
+                              style: kTextStyle.copyWith(fontSize: 13.0),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),

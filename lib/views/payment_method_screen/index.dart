@@ -30,7 +30,6 @@ class PaymentMethodScreen extends StatelessWidget {
           leadingWidth: 100.0,
         ),
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 10.0,

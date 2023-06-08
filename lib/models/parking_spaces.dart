@@ -246,4 +246,24 @@ class ParkingSpace {
     var response = await networkHelper.putData();
     return response;
   }
+
+  Future<Response> addParkingSpace(Map<String, dynamic> data) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/parking-space-provider/',
+      header: header,
+      body: data,
+    );
+
+    var response = await networkHelper.postData();
+
+    return response;
+  }
 }

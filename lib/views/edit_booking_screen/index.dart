@@ -147,7 +147,6 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
         body: Provider.of<EditBookingViewModel>(context).isLoading
             ? const LoadingScreen()
             : SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

@@ -104,7 +104,6 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           child: Provider.of<AddBookingViewModel>(context).isLoading
               ? const LoadingScreen()
               : Column(

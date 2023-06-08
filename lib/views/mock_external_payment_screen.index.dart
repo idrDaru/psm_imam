@@ -59,6 +59,7 @@ class _MockExternalPaymentScreenState extends State<MockExternalPaymentScreen>
             header: header,
             body: data,
           );
+
           var response = await networkHelper.putData();
           var decodeResponse = jsonDecode(response.body);
           if (decodeResponse['status'] == 200) {

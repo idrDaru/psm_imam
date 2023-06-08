@@ -1,0 +1,39 @@
+{
+    "project_info": {
+      "project_number": "190583583986",
+      "project_id": "sprs-df942",
+      "storage_bucket": "sprs-df942.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:190583583986:android:9d53b9b002db16b7264c6b",
+          "android_client_info": {
+            "package_name": "com.example.psm_imam"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "190583583986-pktu85mve2oqr1se5hm4qjp8la5lvu6d.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyDfXSOt2BAfzUl2cL4hdCJokDVV47v_rPY"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "190583583986-pktu85mve2oqr1se5hm4qjp8la5lvu6d.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

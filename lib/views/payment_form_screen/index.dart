@@ -26,7 +26,6 @@ class PaymentFormScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 10.0,

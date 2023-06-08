@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:psm_imam/providers/time_provider.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/add_booking_view_model.dart';
+import 'package:psm_imam/view_models/add_parking_space_view_model.dart';
 import 'package:psm_imam/view_models/edit_booking_view_model.dart';
+import 'package:psm_imam/view_models/edit_parking_space_view_model.dart';
 import 'package:psm_imam/view_models/edit_profile_view_model.dart';
 import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/view_models/login_view_model.dart';
@@ -12,6 +14,7 @@ import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
 import 'package:psm_imam/view_models/parking_layout_view_model.dart';
 import 'package:psm_imam/view_models/parking_location_view_model.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
+import 'package:psm_imam/view_models/user_registration_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
 import 'package:psm_imam/views/edit_booking_screen/index.dart';
@@ -30,8 +33,12 @@ import 'package:psm_imam/views/payment_screen/index.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 
@@ -53,13 +60,22 @@ class MyApp extends StatelessWidget {
               create: (context) => LoginViewModel(),
               child: const LoginScreen(),
             ),
-        UserRegistrationScreen.id: (context) => const UserRegistrationScreen(),
+        UserRegistrationScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => UserRegistrationViewModel(),
+              child: const UserRegistrationScreen(),
+            ),
         ProviderRegistrationScreen.id: (context) =>
             const ProviderRegistrationScreen(),
 
         // PARKING SPACE MANAGEMENT ROUTES
-        AddParkingSpaceScreen.id: (context) => const AddParkingSpaceScreen(),
-        EditParkingSpaceScreen.id: (context) => const EditParkingSpaceScreen(),
+        AddParkingSpaceScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => AddParkingSpaceViewModel(),
+              child: const AddParkingSpaceScreen(),
+            ),
+        EditParkingSpaceScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => EditParkingSpaceViewModel(),
+              child: const EditParkingSpaceScreen(),
+            ),
         ManageParkingSpaceScreen.id: (context) => MultiProvider(
               providers: [
                 ChangeNotifierProvider(
@@ -71,8 +87,6 @@ class MyApp extends StatelessWidget {
               ],
               child: const ManageParkingSpaceScreen(),
             ),
-        // ManageParkingSpaceScreen.id: (context) =>
-        //     const ManageParkingSpaceScreen(),
         ParkingLayoutScreen.id: (context) => ChangeNotifierProvider(
               create: (context) => ParkingLayoutViewModel(),
               child: const ParkingLayoutScreen(),
@@ -122,10 +136,6 @@ class MyApp extends StatelessWidget {
               ],
               child: const ManageBookingScreen(),
             ),
-        // ManageBookingScreen.id: (context) => ChangeNotifierProvider(
-        //       create: (context) => ManageBookingViewModel(),
-        //       child: const ManageBookingScreen(),
-        //     ),
         EditBookingScreen.id: (context) => MultiProvider(
               providers: [
                 ChangeNotifierProvider(

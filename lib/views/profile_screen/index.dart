@@ -12,6 +12,8 @@ import 'package:psm_imam/components/sidebar.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/edit_profile_screen/index.dart';
+import 'package:psm_imam/views/manage_booking_screen/index.dart';
+import 'package:psm_imam/views/manage_parking_space_screen/index.dart';
 
 class ProfileScreen extends StatefulWidget {
   static String id = 'profile_screen';
@@ -51,7 +53,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .length
             .toString();
         count2 = bookingList!
-            .where((element) => element.isPurchased == true)
+            .where(
+              (element) =>
+                  element.isPurchased == true &&
+                  element.timeFrom!.isAfter(DateTime.now()),
+            )
             .length
             .toString();
       });
@@ -62,7 +68,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         parkingSpaceList = Provider.of<ProfileViewModel>(context, listen: false)
             .parkingSpaceList;
-        count1 = parkingSpaceList!.length.toString();
+        count1 = parkingSpaceList!
+            .where((element) => element.isActive == true)
+            .length
+            .toString();
         count2 = parkingSpaceList!
             .where((element) => element.isActive == false)
             .length
@@ -155,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     return Text(
                                       value.user is ParkingUser
                                           ? 'Waiting for Payment'
-                                          : 'Parking Spaces',
+                                          : 'Active Parking Spaces',
                                       style:
                                           kTextStyle.copyWith(fontSize: 12.0),
                                     );
@@ -270,7 +279,7 @@ class ProviderScrolledRow extends StatelessWidget {
       children: [
         TitledScrolledRow(
           data: parkingSpaceList!.where((c) => c.isActive == true).toList(),
-          title: "My Parking Space",
+          title: "Active Parking Space",
         ),
         TitledScrolledRow(
           data: parkingSpaceList!.where((c) => c.isActive == false).toList(),
@@ -288,7 +297,10 @@ class ParkingUserScrolledRow extends StatelessWidget {
   List<dynamic> filterUpcomingParking() {
     List<dynamic> result = [];
 
-    List tmpResult = bookingList!.where((c) => c.isPurchased == true).toList();
+    List tmpResult = bookingList!
+        .where(
+            (c) => c.isPurchased == true && c.timeFrom!.isAfter(DateTime.now()))
+        .toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
@@ -299,7 +311,15 @@ class ParkingUserScrolledRow extends StatelessWidget {
   List<dynamic> filterWaitingForPayment() {
     List<dynamic> result = [];
 
-    List tmpResult = bookingList!.where((c) => c.isPurchased == false).toList();
+    List tmpResult = bookingList!
+        .where(
+          (c) =>
+              c.isPurchased == false &&
+              c.timeFrom!.isAfter(
+                DateTime.now(),
+              ),
+        )
+        .toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
@@ -310,7 +330,10 @@ class ParkingUserScrolledRow extends StatelessWidget {
   List<dynamic> filterHistoryParking() {
     List<dynamic> result = [];
 
-    List tmpResult = bookingList!.toList();
+    List tmpResult = bookingList!
+        .where((c) =>
+            c.isPurchased == true && c.timeFrom!.isBefore(DateTime.now()))
+        .toList();
     for (var element in tmpResult) {
       result.add(element.parkingSpace);
     }
@@ -395,7 +418,6 @@ class ScrolledRow extends StatelessWidget {
         image: DecorationImage(
           image: NetworkImage(
             data.imageDownloadUrl,
-            // 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8aHVtYW58ZW58MHx8MHx8&w=1000&q=80',
           ),
           fit: BoxFit.cover,
         ),

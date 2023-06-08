@@ -10,6 +10,7 @@ import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
+import 'package:psm_imam/views/add_parking_space_screen/index.dart';
 import 'package:psm_imam/views/edit_parking_space_screen/index.dart';
 
 class ManageParkingSpaceScreen extends StatefulWidget {
@@ -99,7 +100,6 @@ class _ManageParkingSpaceScreenState extends State<ManageParkingSpaceScreen> {
               Provider.of<UserProvider>(context).isLoading
           ? const LoadingScreen()
           : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   const Header(title: 'My Parking Spaces'),
@@ -186,7 +186,7 @@ class _ManageParkingSpaceScreenState extends State<ManageParkingSpaceScreen> {
                                           Consumer<ManageParkingSpaceViewModel>(
                                             builder: (context, value, child) =>
                                                 Text(
-                                              '${value.parkingSpace![index].addressLineOne}, ${value.parkingSpace![index].addressLineTwo}, ${value.parkingSpace![index].postalCode} ${value.parkingSpace![index].city}, ${value.parkingSpace![index].stateProvince}, ${value.parkingSpace![index].country}',
+                                              '${value.parkingSpace![index].addressLineOne}, ${value.parkingSpace![index].addressLineTwo == null || value.parkingSpace![index].addressLineTwo == "" ? "" : "${value.parkingSpace![index].addressLineTwo}, "}${value.parkingSpace![index].postalCode} ${value.parkingSpace![index].city}, ${value.parkingSpace![index].stateProvince}, ${value.parkingSpace![index].country}',
                                               style: kTextStyle.copyWith(
                                                 fontSize: 12.0,
                                               ),
@@ -234,24 +234,32 @@ class _ManageParkingSpaceScreenState extends State<ManageParkingSpaceScreen> {
                                         ),
                                       ),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.pushNamed(
-                                            context, EditParkingSpaceScreen.id);
+                                    Consumer<ManageParkingSpaceViewModel>(
+                                      builder: (context, value, child) {
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              EditParkingSpaceScreen.id,
+                                              arguments:
+                                                  value.parkingSpace![index].id,
+                                            );
+                                          },
+                                          style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll<Color>(
+                                              kPrimaryColor,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Edit Parking Space',
+                                            style: kTextStyle.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
                                       },
-                                      style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll<Color>(
-                                          kPrimaryColor,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'Edit Parking Space',
-                                        style: kTextStyle.copyWith(
-                                          color: Colors.white,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -263,6 +271,16 @@ class _ManageParkingSpaceScreenState extends State<ManageParkingSpaceScreen> {
                     ),
                   ),
                   const SizedBox(height: 20.0),
+                  SubmitButton(
+                    title: 'Add Parking Space',
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        AddParkingSpaceScreen.id,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 50.0),
                 ],
               ),
             ),

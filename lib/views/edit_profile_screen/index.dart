@@ -78,7 +78,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         body: Provider.of<EditProfileViewModel>(context).isLoading
             ? const LoadingScreen()
             : SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

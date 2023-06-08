@@ -31,4 +31,9 @@ class ProfileViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  DateTime getCurrentDate() {
+    DateTime dateTime = DateTime.now();
+    return dateTime;
+  }
 }

@@ -98,7 +98,6 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
               Provider.of<UserProvider>(context).isLoading
           ? const LoadingScreen()
           : SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   const Header(title: 'My Booking'),
@@ -229,7 +228,7 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                           ),
                                           const SizedBox(height: 20.0),
                                           Text(
-                                            '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo}, ${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
+                                            '${parkingSpace.addressLineOne}, ${parkingSpace.addressLineTwo == null || parkingSpace.addressLineTwo == "" ? "" : "${parkingSpace.addressLineTwo}, "}${parkingSpace.postalCode} ${parkingSpace.city}, ${parkingSpace.stateProvince}, ${parkingSpace.country}',
                                             style: kTextStyle.copyWith(
                                               fontSize: 11.0,
                                             ),
@@ -315,7 +314,6 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
-                                        // print(bookingList![index].id);
                                         bookingList![index].isPurchased!
                                             ? null
                                             : Navigator.pushNamed(
