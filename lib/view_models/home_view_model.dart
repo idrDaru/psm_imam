@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
-import 'package:psm_imam/models/user.dart';
 
 class HomeViewModel extends ChangeNotifier {
   List<ParkingSpace> _parkingSpace = [];
-  dynamic _user;
-  bool isLoading = false;
+  ParkingSpace? _parkingSpaceDetails;
+  bool isLoading = false, isPopUp = false;
 
   List<ParkingSpace> get parkingSpace => _parkingSpace;
-  dynamic get user => _user;
+  ParkingSpace? get parkingSpaceDetail => _parkingSpaceDetails;
 
   Future<void> getAllParkingSpace() async {
     isLoading = true;
@@ -21,14 +20,13 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getUser() async {
-    isLoading = true;
+  setParkingSpaceDetails(ParkingSpace parkingSpace) {
+    _parkingSpaceDetails = parkingSpace;
     notifyListeners();
+  }
 
-    User user = User();
-    _user = await user.getUser();
-
-    isLoading = false;
+  setIsPopUp() {
+    isPopUp = !isPopUp;
     notifyListeners();
   }
 }

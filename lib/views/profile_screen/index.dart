@@ -2,12 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:psm_imam/components/custom_scaffold.dart';
 import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/sidebar.dart';
+import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/edit_profile_screen/index.dart';
 
@@ -36,9 +38,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   getProfileScreenData() async {
-    await Provider.of<ProfileViewModel>(context, listen: false).getUserData();
-    if (Provider.of<ProfileViewModel>(context, listen: false).user
-        is ParkingUser) {
+    await Provider.of<UserProvider>(context, listen: false).getUser();
+    if (Provider.of<UserProvider>(context, listen: false).user is ParkingUser) {
       await Provider.of<ProfileViewModel>(context, listen: false)
           .getBookingList();
 
@@ -55,7 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .toString();
       });
     } else {
-      await Provider.of<ProfileViewModel>(context).getParkingSpaceList();
+      await Provider.of<ProfileViewModel>(context, listen: false)
+          .getParkingSpaceList();
 
       setState(() {
         parkingSpaceList = Provider.of<ProfileViewModel>(context, listen: false)
@@ -72,177 +74,168 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        drawer: const Sidebar(),
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          iconTheme: const IconThemeData(color: kPrimaryColor),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: Provider.of<ProfileViewModel>(context).isLoading
-            ? const LoadingScreen()
-            : ListView(
-                padding: const EdgeInsets.only(top: 0),
-                children: [
-                  Stack(
-                    children: [
-                      const ProfileHeader(),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 20,
-                          left: 20,
-                          top: 50,
-                          bottom: 20,
-                        ),
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Consumer<ProfileViewModel>(
-                                builder: (context, value, child) {
-                                  return Text(
-                                    value.user is ParkingUser
-                                        ? "PROFILE"
-                                        : "PROVIDER",
-                                    style: kTitleTextStyle,
-                                  );
-                                },
-                              ),
+    return CustomScaffold1(
+      body: Provider.of<UserProvider>(context).isLoading ||
+              Provider.of<ProfileViewModel>(context).isLoading
+          ? const LoadingScreen()
+          : ListView(
+              padding: const EdgeInsets.only(top: 0),
+              children: [
+                Stack(
+                  children: [
+                    const ProfileHeader(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 20,
+                        left: 20,
+                        top: 50,
+                        bottom: 20,
+                      ),
+                      child: Column(
+                        children: [
+                          Center(
+                            child: Consumer<UserProvider>(
+                              builder: (context, value, child) {
+                                return Text(
+                                  value.user is ParkingUser
+                                      ? "PROFILE"
+                                      : "PROVIDER",
+                                  style: kTitleTextStyle,
+                                );
+                              },
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                                vertical: 30.0,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Consumer<ProfileViewModel>(
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                              vertical: 30.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Consumer<UserProvider>(
+                                  builder: (context, value, child) {
+                                    return CircleAvatar(
+                                      radius: 50.0,
+                                      backgroundImage: NetworkImage(
+                                        value.user.user.imageDownloadURL,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 20.0),
+                                Flexible(
+                                  child: Consumer<UserProvider>(
                                     builder: (context, value, child) {
-                                      return CircleAvatar(
-                                        radius: 50.0,
-                                        backgroundImage: NetworkImage(
-                                          value.user.user.imageDownloadURL,
-                                        ),
+                                      return Text(
+                                        value.user is ParkingUser
+                                            ? '${value.user.firstName} ${value.user.lastName}'
+                                            : '${value.user.name}',
+                                        style: kTitleTextStyle,
                                       );
                                     },
                                   ),
-                                  const SizedBox(width: 20.0),
-                                  Flexible(
-                                    child: Consumer<ProfileViewModel>(
-                                      builder: (context, value, child) {
-                                        return Text(
-                                          value.user is ParkingUser
-                                              ? '${value.user.firstName} ${value.user.lastName}'
-                                              : '${value.user.name}',
-                                          style: kTitleTextStyle,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      count1,
-                                      style: kTitleTextStyle.copyWith(
-                                        color: kPrimaryColor,
-                                      ),
-                                    ),
-                                    Consumer<ProfileViewModel>(
-                                        builder: (context, value, child) {
-                                      return Text(
-                                        value.user is ParkingUser
-                                            ? 'Waiting for Payment'
-                                            : 'Parking Spaces',
-                                        style:
-                                            kTextStyle.copyWith(fontSize: 12.0),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Text(
-                                      count2,
-                                      style: kTitleTextStyle.copyWith(
-                                        color: kPrimaryColor,
-                                      ),
-                                    ),
-                                    Consumer<ProfileViewModel>(
-                                        builder: (context, value, child) {
-                                      return Text(
-                                        value.user is ParkingUser
-                                            ? 'Upcoming Parking'
-                                            : 'Deactivated',
-                                        style:
-                                            kTextStyle.copyWith(fontSize: 12.0),
-                                      );
-                                    })
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      EditProfileScreen.id,
-                                    );
-                                  },
-                                  style: kSendButtonStyle.copyWith(
-                                    padding: const MaterialStatePropertyAll<
-                                        EdgeInsetsGeometry>(
-                                      EdgeInsets.symmetric(
-                                        vertical: 10.0,
-                                        horizontal: 25.0,
-                                      ),
-                                    ),
-                                  ),
-                                  child: const Text('Edit Profile'),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: height / 2.3),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50.0),
-                            topRight: Radius.circular(50.0),
                           ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 30.0,
-                            horizontal: 20.0,
-                          ),
-                          child: Consumer<ProfileViewModel>(
-                            builder: (context, value, child) {
-                              return value.user is ParkingUser
-                                  ? ParkingUserScrolledRow(
-                                      bookingList: bookingList,
-                                    )
-                                  : ProviderScrolledRow(
-                                      parkingSpaceList: parkingSpaceList,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    count1,
+                                    style: kTitleTextStyle.copyWith(
+                                      color: kPrimaryColor,
+                                    ),
+                                  ),
+                                  Consumer<UserProvider>(
+                                      builder: (context, value, child) {
+                                    return Text(
+                                      value.user is ParkingUser
+                                          ? 'Waiting for Payment'
+                                          : 'Parking Spaces',
+                                      style:
+                                          kTextStyle.copyWith(fontSize: 12.0),
                                     );
-                            },
+                                  }),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    count2,
+                                    style: kTitleTextStyle.copyWith(
+                                      color: kPrimaryColor,
+                                    ),
+                                  ),
+                                  Consumer<UserProvider>(
+                                      builder: (context, value, child) {
+                                    return Text(
+                                      value.user is ParkingUser
+                                          ? 'Upcoming Parking'
+                                          : 'Deactivated',
+                                      style:
+                                          kTextStyle.copyWith(fontSize: 12.0),
+                                    );
+                                  })
+                                ],
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    EditProfileScreen.id,
+                                  );
+                                },
+                                style: kSendButtonStyle.copyWith(
+                                  padding: const MaterialStatePropertyAll<
+                                      EdgeInsetsGeometry>(
+                                    EdgeInsets.symmetric(
+                                      vertical: 10.0,
+                                      horizontal: 25.0,
+                                    ),
+                                  ),
+                                ),
+                                child: const Text('Edit Profile'),
+                              ),
+                            ],
                           ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: height / 2.3),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50.0),
+                          topRight: Radius.circular(50.0),
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 30.0,
+                          horizontal: 20.0,
+                        ),
+                        child: Consumer<UserProvider>(
+                          builder: (context, value, child) {
+                            return value.user is ParkingUser
+                                ? ParkingUserScrolledRow(
+                                    bookingList: bookingList,
+                                  )
+                                : ProviderScrolledRow(
+                                    parkingSpaceList: parkingSpaceList,
+                                  );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
     );
   }
 }

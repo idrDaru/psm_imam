@@ -53,4 +53,17 @@ class NetworkHelper {
 
     return response;
   }
+
+  Future<http.Response> deleteData() async {
+    await dotenv.load(fileName: ".env");
+
+    http.Response response = await http.delete(
+      Uri.parse(
+        '${dotenv.env['API_URL']}$endpoint',
+      ),
+      headers: header,
+    );
+
+    return response;
+  }
 }

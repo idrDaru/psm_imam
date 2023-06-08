@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/providers/time_provider.dart';
+import 'package:psm_imam/providers/user_provider.dart';
+import 'package:psm_imam/view_models/add_booking_view_model.dart';
+import 'package:psm_imam/view_models/edit_booking_view_model.dart';
 import 'package:psm_imam/view_models/edit_profile_view_model.dart';
 import 'package:psm_imam/view_models/home_view_model.dart';
+import 'package:psm_imam/view_models/login_view_model.dart';
 import 'package:psm_imam/view_models/manage_booking_view_model.dart';
+import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
+import 'package:psm_imam/view_models/parking_layout_view_model.dart';
+import 'package:psm_imam/view_models/parking_location_view_model.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
@@ -42,7 +49,10 @@ class MyApp extends StatelessWidget {
       initialRoute: LoginScreen.id,
       routes: {
         // AUTHENTICATION ROUTES
-        LoginScreen.id: (context) => const LoginScreen(),
+        LoginScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => LoginViewModel(),
+              child: const LoginScreen(),
+            ),
         UserRegistrationScreen.id: (context) => const UserRegistrationScreen(),
         ProviderRegistrationScreen.id: (context) =>
             const ProviderRegistrationScreen(),
@@ -50,14 +60,38 @@ class MyApp extends StatelessWidget {
         // PARKING SPACE MANAGEMENT ROUTES
         AddParkingSpaceScreen.id: (context) => const AddParkingSpaceScreen(),
         EditParkingSpaceScreen.id: (context) => const EditParkingSpaceScreen(),
-        ManageParkingSpaceScreen.id: (context) =>
-            const ManageParkingSpaceScreen(),
-        ParkingLayoutScreen.id: (context) => const ParkingLayoutScreen(),
-        ParkingLocationScreen.id: (context) => const ParkingLocationScreen(),
+        ManageParkingSpaceScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => UserProvider(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => ManageParkingSpaceViewModel(),
+                ),
+              ],
+              child: const ManageParkingSpaceScreen(),
+            ),
+        // ManageParkingSpaceScreen.id: (context) =>
+        //     const ManageParkingSpaceScreen(),
+        ParkingLayoutScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ParkingLayoutViewModel(),
+              child: const ParkingLayoutScreen(),
+            ),
+        ParkingLocationScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ParkingLocationViewModel(),
+              child: const ParkingLocationScreen(),
+            ),
 
         // ACCOUNT MANAGEMENT ROUTES
-        ProfileScreen.id: (context) => ChangeNotifierProvider(
-              create: (context) => ProfileViewModel(),
+        ProfileScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => ProfileViewModel(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => UserProvider(),
+                ),
+              ],
               child: const ProfileScreen(),
             ),
         EditProfileScreen.id: (context) => ChangeNotifierProvider(
@@ -66,15 +100,43 @@ class MyApp extends StatelessWidget {
             ),
 
         // MANAGE BOOKING SCREEN
-        AddBookingScreen.id: (context) => ChangeNotifierProvider(
-              create: (context) => TimeProvider(),
+        AddBookingScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => AddBookingViewModel(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => TimeProvider(),
+                ),
+              ],
               child: const AddBookingScreen(),
             ),
-        ManageBookingScreen.id: (context) => ChangeNotifierProvider(
-              create: (context) => ManageBookingViewModel(),
+        ManageBookingScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => ManageBookingViewModel(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => UserProvider(),
+                ),
+              ],
               child: const ManageBookingScreen(),
             ),
-        EditBookingScreen.id: (context) => const EditBookingScreen(),
+        // ManageBookingScreen.id: (context) => ChangeNotifierProvider(
+        //       create: (context) => ManageBookingViewModel(),
+        //       child: const ManageBookingScreen(),
+        //     ),
+        EditBookingScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => EditBookingViewModel(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => TimeProvider(),
+                ),
+              ],
+              child: const EditBookingScreen(),
+            ),
 
         // PAYMENT SCREEN
         PaymentFormScreen.id: (context) => const PaymentFormScreen(),
@@ -84,8 +146,15 @@ class MyApp extends StatelessWidget {
             const MockExternalPaymentScreen(),
 
         // HOME SCREEN
-        HomeScreen.id: (context) => ChangeNotifierProvider(
-              create: (context) => HomeViewModel(),
+        HomeScreen.id: (context) => MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                  create: (context) => HomeViewModel(),
+                ),
+                ChangeNotifierProvider(
+                  create: (context) => UserProvider(),
+                ),
+              ],
               child: const HomeScreen(),
             ),
       },

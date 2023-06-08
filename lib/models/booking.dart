@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:psm_imam/models/parking_layout.dart';
 import 'package:psm_imam/models/parking_location.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
@@ -87,6 +88,7 @@ class Booking {
                   ['parking_space_number'],
               isActive: value['parking_space']['is_active'],
               parkingLayout: ParkingLayout(
+                id: value['parking_space']['parkinglayout_set'][0]['id'],
                 carSpotNumber: value['parking_space']['parkinglayout_set'][0]
                     ['car_spot_number'],
                 motorcycleSpotNumber: value['parking_space']
@@ -100,6 +102,7 @@ class Booking {
                     ['motorcycle_price'],
               ),
               parkingLocation: ParkingLocation(
+                id: value['parking_space']['parkinglocation_set'][0]['id'],
                 latitude: value['parking_space']['parkinglocation_set'][0]
                     ['latitude'],
                 longitude: value['parking_space']['parkinglocation_set'][0]
@@ -116,5 +119,125 @@ class Booking {
     );
 
     return bookings;
+  }
+
+  Future<Booking> getBooking(String id) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/booking/$id',
+      header: header,
+    );
+
+    var response = await networkHelper.getData();
+    var decodeResponse = jsonDecode(response.body);
+    var data = decodeResponse['data'];
+
+    List<ParkingSpot> parkingSpot = [];
+    data['parking_space']['parkinglayout_set'][0]['parkingspot_set'].forEach(
+      (value) {
+        parkingSpot.add(
+          ParkingSpot(
+            id: value['id'],
+            name: value['name'],
+            position: value['position'],
+            type: value['type'],
+            status: value['status'],
+          ),
+        );
+      },
+    );
+
+    List<String> parkingPos = [];
+    data['parking_spot'].forEach((value) {
+      parkingPos.add(value.toString());
+    });
+
+    Booking booking = Booking(
+      id: data['id'],
+      isPurchased: data['is_purchased'],
+      timeFrom: DateTime.parse(data['time_from']),
+      timeTo: DateTime.parse(data['time_to']),
+      parkingSpace: ParkingSpace(
+        id: data['parking_space']['id'],
+        name: data['parking_space']['name'],
+        addressLineOne: data['parking_space']['address_line_one'],
+        addressLineTwo: data['parking_space']['address_line_two'],
+        city: data['parking_space']['city'],
+        stateProvince: data['parking_space']['state_province'],
+        country: data['parking_space']['country'],
+        postalCode: data['parking_space']['postal_code'],
+        imageDownloadUrl: data['parking_space']['image_download_url'],
+        parkingSpaceNumber: data['parking_space']['parking_space_number'],
+        isActive: data['parking_space']['is_active'],
+        parkingLayout: ParkingLayout(
+          id: data['parking_space']['parkinglayout_set'][0]['id'],
+          carSpotNumber: data['parking_space']['parkinglayout_set'][0]
+              ['car_spot_number'],
+          motorcycleSpotNumber: data['parking_space']['parkinglayout_set'][0]
+              ['motorcycle_spot_number'],
+          position: data['parking_space']['parkinglayout_set'][0]['position'],
+          parkingSpot: parkingSpot,
+          carPrice: data['parking_space']['parkinglayout_set'][0]['car_price'],
+          motorcyclePrice: data['parking_space']['parkinglayout_set'][0]
+              ['motorcycle_price'],
+        ),
+        parkingLocation: ParkingLocation(
+          id: data['parking_space']['parkinglocation_set'][0]['id'],
+          latitude: data['parking_space']['parkinglocation_set'][0]['latitude'],
+          longitude: data['parking_space']['parkinglocation_set'][0]
+              ['longitude'],
+        ),
+      ),
+      totalCar: data['total_car'],
+      totalMotorcycle: data['total_motorcycle'],
+      totalPrice: data['total_price'],
+      parkingPosition: parkingPos,
+    );
+
+    return booking;
+  }
+
+  Future<Response> updateBooking(Map<String, dynamic> data, String id) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/booking/$id',
+      header: header,
+      body: data,
+    );
+
+    var response = await networkHelper.putData();
+    return response;
+  }
+
+  Future<Response> deleteBooking(String id) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/booking/$id',
+      header: header,
+    );
+
+    var response = await networkHelper.deleteData();
+    return response;
   }
 }

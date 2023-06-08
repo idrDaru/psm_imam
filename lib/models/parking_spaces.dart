@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
 import 'package:psm_imam/models/parking_layout.dart';
 import 'package:psm_imam/models/parking_location.dart';
 import 'package:psm_imam/models/parking_spot.dart';
@@ -82,6 +83,7 @@ class ParkingSpace {
           parkingSpaceNumber: value['parking_space_number'],
           isActive: value['is_active'],
           parkingLayout: ParkingLayout(
+            id: value['parkinglayout_set'][0]['id'],
             carSpotNumber: value['parkinglayout_set'][0]['car_spot_number'],
             motorcycleSpotNumber: value['parkinglayout_set'][0]
                 ['motorcycle_spot_number'],
@@ -91,6 +93,7 @@ class ParkingSpace {
             motorcyclePrice: value['parkinglayout_set'][0]['motorcycle_price'],
           ),
           parkingLocation: ParkingLocation(
+            id: value['parkinglocation_set'][0]['id'],
             latitude: value['parkinglocation_set'][0]['latitude'],
             longitude: value['parkinglocation_set'][0]['longitude'],
           ),
@@ -136,6 +139,7 @@ class ParkingSpace {
           parkingSpaceNumber: value['parking_space_number'],
           isActive: value['is_active'],
           parkingLayout: ParkingLayout(
+            id: value['parkinglayout_set'][0]['id'],
             carSpotNumber: value['parkinglayout_set'][0]['car_spot_number'],
             motorcycleSpotNumber: value['parkinglayout_set'][0]
                 ['motorcycle_spot_number'],
@@ -145,6 +149,7 @@ class ParkingSpace {
             motorcyclePrice: value['parkinglayout_set'][0]['motorcycle_price'],
           ),
           parkingLocation: ParkingLocation(
+            id: value['parkinglocation_set'][0]['id'],
             latitude: value['parkinglocation_set'][0]['latitude'],
             longitude: value['parkinglocation_set'][0]['longitude'],
           ),
@@ -153,5 +158,92 @@ class ParkingSpace {
     });
 
     return parkingSpaces;
+  }
+
+  Future<ParkingSpace> getParkingSpaceDetail(String id) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/parking-space/$id',
+      header: header,
+    );
+
+    var response = await networkHelper.getData();
+    var decodeResponse = jsonDecode(response.body);
+    var data = decodeResponse['data'];
+
+    List<ParkingSpot> parkingSpot = [];
+    data['parkinglayout_set'].forEach((value) {
+      value['parkingspot_set'].forEach((value) {
+        parkingSpot.add(
+          ParkingSpot(
+            id: value['id'],
+            name: value['name'],
+            position: value['position'],
+            type: value['type'],
+            status: value['status'],
+          ),
+        );
+      });
+    });
+
+    ParkingSpace parkingSpace = ParkingSpace(
+      id: data['id'],
+      name: data['name'],
+      addressLineOne: data['address_line_one'],
+      addressLineTwo: data['address_line_two'],
+      city: data['city'],
+      stateProvince: data['state_province'],
+      country: data['country'],
+      postalCode: data['postal_code'],
+      imageDownloadUrl: data['image_download_url'],
+      parkingSpaceNumber: data['parking_space_number'],
+      isActive: data['is_active'],
+      parkingLayout: ParkingLayout(
+        id: data['parkinglayout_set'][0]['id'],
+        carSpotNumber: data['parkinglayout_set'][0]['car_spot_number'],
+        motorcycleSpotNumber: data['parkinglayout_set'][0]
+            ['motorcycle_spot_number'],
+        position: data['parkinglayout_set'][0]['position'],
+        parkingSpot: parkingSpot,
+        carPrice: data['parkinglayout_set'][0]['car_price'],
+        motorcyclePrice: data['parkinglayout_set'][0]['motorcycle_price'],
+      ),
+      parkingLocation: ParkingLocation(
+        id: data['parkinglocation_set'][0]['id'],
+        latitude: data['parkinglocation_set'][0]['latitude'],
+        longitude: data['parkinglocation_set'][0]['longitude'],
+      ),
+    );
+
+    return parkingSpace;
+  }
+
+  Future<Response> updateParkingSpace(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/parking-space/$id',
+      header: header,
+      body: data,
+    );
+
+    var response = await networkHelper.putData();
+    return response;
   }
 }

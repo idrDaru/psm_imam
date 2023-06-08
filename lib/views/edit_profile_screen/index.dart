@@ -1,18 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/models/parking_provider.dart';
 import 'package:psm_imam/models/parking_user.dart';
-import 'package:psm_imam/services/networking.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
 import 'package:psm_imam/components/shadow_text_field.dart';
 import 'package:psm_imam/components/submit_button.dart';
 import 'package:psm_imam/view_models/edit_profile_view_model.dart';
-import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/profile_screen/index.dart';
 
 class EditProfileScreen extends StatefulWidget {

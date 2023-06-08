@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
+import 'package:psm_imam/helpers/format_date.dart';
 
 class TimeProvider extends ChangeNotifier {
   Map<String, Map<String, String>> times = {
@@ -31,6 +32,15 @@ class TimeProvider extends ChangeNotifier {
 
   setDate(DateTime newDate) {
     _date = newDate;
+    notifyListeners();
+  }
+
+  setInitialValue(DateTime from, DateTime to) {
+    FormatDate formatDate = FormatDate();
+    setFrom('hour', formatDate.formatHour(from).toString());
+    setFrom('minute', formatDate.formatMinute(from).toString());
+    setTo('hour', formatDate.formatHour(to).toString());
+    setTo('minute', formatDate.formatMinute(to).toString());
     notifyListeners();
   }
 
