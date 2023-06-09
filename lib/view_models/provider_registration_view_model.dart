@@ -3,15 +3,17 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:psm_imam/constants/constants.dart';
 import 'package:psm_imam/helpers/image_handler.dart';
 import 'package:psm_imam/services/networking.dart';
-import 'package:psm_imam/constants/constants.dart';
 
-class UserRegistrationViewModel extends ChangeNotifier {
+class ProviderRegistrationViewModel extends ChangeNotifier {
   bool isLoading = false, isFormEmpty = false, isAgree = false;
   File? image;
   UploadTask? uploadTask;
-  Map<String, dynamic> data = {};
+  Map<String, dynamic> data = {
+    'type': '2',
+  };
 
   Future<Response> submitForm() async {
     isLoading = true;
@@ -54,12 +56,28 @@ class UserRegistrationViewModel extends ChangeNotifier {
   }
 
   bool validateForm() {
-    if (data['first_name'] == null || data['first_name'] == '') return false;
+    if (data['name'] == null || data['name'] == '') return false;
+
+    if (data['address_line_one'] == null || data['address_line_one'] == '') {
+      return false;
+    }
+
+    if (data['city'] == null || data['city'] == '') return false;
+
+    if (data['state_province'] == null || data['state_province'] == '') {
+      return false;
+    }
+
+    if (data['postal_code'] == null || data['postal_code'] == '') return false;
+
     if (data['email'] == null || data['email'] == '') return false;
+
     if (data['password'] == null || data['password'] == '') return false;
+
     if (data['confirm_password'] == null || data['confirm_password'] == '') {
       return false;
     }
+
     if (!isAgree) return false;
 
     return true;

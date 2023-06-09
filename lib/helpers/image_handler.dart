@@ -1,9 +1,13 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/constants/constants.dart';
 
-class ImagePickerHelper {
+class ImageHandler {
+  UploadTask? _uploadTask;
+
   Future<File> pickImageGallery() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
@@ -51,5 +55,17 @@ class ImagePickerHelper {
         return alertDialog;
       },
     );
+  }
+
+  Future<String> uploadProfilePhoto(File file, String fileName) async {
+    final path = '${profileFilePath}_$fileName.jpg';
+    final ref = FirebaseStorage.instance.ref().child(path);
+    _uploadTask = ref.putFile(file);
+
+    final snapshot = await _uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+
+    return urlDownload;
   }
 }

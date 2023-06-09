@@ -8,12 +8,9 @@ import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/components/constants.dart';
-import 'package:psm_imam/components/sidebar.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/views/edit_profile_screen/index.dart';
-import 'package:psm_imam/views/manage_booking_screen/index.dart';
-import 'package:psm_imam/views/manage_parking_space_screen/index.dart';
 
 class ProfileScreen extends StatefulWidget {
   static String id = 'profile_screen';

@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart';
+import 'package:psm_imam/helpers/image_handler.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
 import 'package:psm_imam/constants/constants.dart';
 
@@ -14,6 +18,8 @@ class AddParkingSpaceViewModel extends ChangeNotifier {
   };
 
   bool isLoading = false, isFormEmpty = false, isChecked = false;
+  File? image;
+  UploadTask? uploadTask;
 
   Future<Response> submitAddParkingSpace() async {
     isLoading = true;
@@ -22,6 +28,7 @@ class AddParkingSpaceViewModel extends ChangeNotifier {
     await getParkingSpaceLocation();
 
     ParkingSpace parkingSpace = ParkingSpace();
+    await uploadFile();
     Response response = await parkingSpace.addParkingSpace(data);
 
     isLoading = false;
@@ -69,6 +76,10 @@ class AddParkingSpaceViewModel extends ChangeNotifier {
       data['motorcycle_price'] = 0.0;
     }
 
+    if (image == null) {
+      return false;
+    }
+
     if (!isChecked) {
       return false;
     }
@@ -97,6 +108,30 @@ class AddParkingSpaceViewModel extends ChangeNotifier {
     data['longitude'] = locations[0].longitude;
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  uploadFile() async {
+    isLoading = true;
+    notifyListeners();
+
+    final path =
+        '${profileFilePath}_${data['first_name']}${data['last_name'] == null ? "" : "_${data['last_name']}"}.jpg';
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(image!);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+    data['image_download_url'] = urlDownload.toString();
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future handleImage() async {
+    ImageHandler imagePickerHelper = ImageHandler();
+    image = await imagePickerHelper.pickImageGallery();
     notifyListeners();
   }
 }

@@ -109,4 +109,4 @@ final List<Map<String, dynamic>> staticParkingSpot = [
   },
 ];
 
-final profile_file_path = 'profile_image/';
+const profileFilePath = 'profile_image/';

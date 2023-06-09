@@ -110,7 +110,10 @@ class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
                                       newValue,
                                     );
                                   },
-                                  title: value.parkingSpace!.addressLineTwo!,
+                                  title:
+                                      value.parkingSpace!.addressLineTwo == null
+                                          ? ''
+                                          : value.parkingSpace!.addressLineTwo!,
                                 ),
                                 ShadowTextField(
                                   (newValue) {
@@ -154,59 +157,73 @@ class _EditParkingSpaceScreenState extends State<EditParkingSpaceScreen> {
                                   style: kTextStyle,
                                 ),
                                 const SizedBox(height: 20.0),
-                                Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SubmitButton(
-                                            title: 'Upload', onPressed: () {}),
-                                        TextButton(
-                                          onPressed: () {},
-                                          child: const Text('Photo1.jpg'),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20.0),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SubmitButton(
-                                            title: 'Upload', onPressed: () {}),
-                                        TextButton(
-                                          onPressed: () {},
-                                          child: const Text('Photo2.jpg'),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20.0),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        SubmitButton(
-                                            title: 'Upload', onPressed: () {}),
-                                        TextButton(
-                                          onPressed: () {},
-                                          child: const Text('Photo3.jpg'),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20.0),
-                                  ],
-                                ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    '+ Add more photo',
-                                    style: kTextStyle.copyWith(
-                                      color: const Color(0xFFE85A2A),
-                                      fontSize: 12.0,
-                                    ),
+                                Center(
+                                  child: SubmitButton(
+                                    title: 'Change Photo',
+                                    onPressed: () {
+                                      value.handleImage();
+                                    },
                                   ),
                                 ),
+                                const SizedBox(height: 20.0),
+                                value.image != null
+                                    ? Image.file(value.image!)
+                                    : Image.network(
+                                        value.parkingSpace!.imageDownloadUrl!,
+                                      ),
+                                // Column(
+                                //   children: [
+                                //     Row(
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.spaceBetween,
+                                //       children: [
+                                //         SubmitButton(
+                                //             title: 'Upload', onPressed: () {}),
+                                //         TextButton(
+                                //           onPressed: () {},
+                                //           child: const Text('Photo1.jpg'),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     const SizedBox(height: 20.0),
+                                //     // Row(
+                                //     //   mainAxisAlignment:
+                                //     //       MainAxisAlignment.spaceBetween,
+                                //     //   children: [
+                                //     //     SubmitButton(
+                                //     //         title: 'Upload', onPressed: () {}),
+                                //     //     TextButton(
+                                //     //       onPressed: () {},
+                                //     //       child: const Text('Photo2.jpg'),
+                                //     //     ),
+                                //     //   ],
+                                //     // ),
+                                //     // const SizedBox(height: 20.0),
+                                //     // Row(
+                                //     //   mainAxisAlignment:
+                                //     //       MainAxisAlignment.spaceBetween,
+                                //     //   children: [
+                                //     //     SubmitButton(
+                                //     //         title: 'Upload', onPressed: () {}),
+                                //     //     TextButton(
+                                //     //       onPressed: () {},
+                                //     //       child: const Text('Photo3.jpg'),
+                                //     //     ),
+                                //     //   ],
+                                //     // ),
+                                //     // const SizedBox(height: 20.0),
+                                //   ],
+                                // ),
+                                // TextButton(
+                                //   onPressed: () {},
+                                //   child: Text(
+                                //     '+ Add more photo',
+                                //     style: kTextStyle.copyWith(
+                                //       color: const Color(0xFFE85A2A),
+                                //       fontSize: 12.0,
+                                //     ),
+                                //   ),
+                                // ),
                                 const SizedBox(height: 20.0),
                                 const Text(
                                   'Motorcycle spot price (optional):',

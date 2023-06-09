@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart';
+import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
-import 'package:psm_imam/services/networking.dart';
-import 'package:psm_imam/views/manage_booking_screen/index.dart';
 
 class AddBookingViewModel extends ChangeNotifier {
   ParkingSpace? _parkingSpaceDetails;
@@ -28,34 +26,14 @@ class AddBookingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<dynamic> submitAddBooking(context, data) async {
+  Future<Response> submitAddBooking(Map<String, dynamic> data) async {
     isLoading = true;
     notifyListeners();
 
-    const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: 'access_token');
+    Booking booking = Booking();
+    Response response = await booking.addBooking(data);
 
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-
-    NetworkHelper networkHelper = NetworkHelper(
-      endpoint: '/api/create-booking/',
-      header: header,
-      body: data,
-    );
-
-    var response = await networkHelper.postData();
-    var decodeResponse = jsonDecode(response.body);
-    if (decodeResponse['status'] == 201) {
-      isLoading = false;
-      notifyListeners();
-
-      Navigator.pushReplacementNamed(context, ManageBookingScreen.id);
-    } else {
-      print(decodeResponse['message']);
-    }
+    return response;
   }
 
   Future<void> getParkingSpaceDetail(String id) async {

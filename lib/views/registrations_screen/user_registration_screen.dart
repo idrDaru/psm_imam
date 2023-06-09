@@ -1,11 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/header.dart';
@@ -16,7 +13,6 @@ import 'package:psm_imam/view_models/user_registration_view_model.dart';
 import 'package:psm_imam/views/login_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'dart:convert';
-import 'package:psm_imam/services/networking.dart';
 
 class UserRegistrationScreen extends StatefulWidget {
   static String id = 'user_registration_screen';
@@ -27,11 +23,12 @@ class UserRegistrationScreen extends StatefulWidget {
 }
 
 class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
-  bool isChecked = false;
-
   submitForm() async {
-    if (Provider.of<UserRegistrationViewModel>(context, listen: false)
-        .validateForm()) {
+    bool validateForm = Provider.of<UserRegistrationViewModel>(
+      context,
+      listen: false,
+    ).validateForm();
+    if (validateForm) {
       Response response = await Provider.of<UserRegistrationViewModel>(
         context,
         listen: false,
@@ -45,14 +42,11 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         print(decodeResponse['message']);
       }
     }
-    print("Password Not Same");
-  }
 
-  pickImage(BuildContext context) async {
-    await Provider.of<UserRegistrationViewModel>(
+    Provider.of<UserRegistrationViewModel>(
       context,
       listen: false,
-    ).handleImage(context);
+    ).setIsFormEmpty(true);
   }
 
   @override
@@ -99,17 +93,27 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                                 const SizedBox(height: 8.0),
                                 SubmitButton(
                                   title: 'Upload',
-                                  onPressed: () {
-                                    pickImage(context);
+                                  onPressed: () async {
+                                    await value.handleImage(context);
                                   },
                                 ),
                                 const SizedBox(height: 50.0),
+                                value.isFormEmpty
+                                    ? Center(
+                                        child: Text(
+                                          '** Please fill in required field',
+                                          style: kTextStyle.copyWith(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
                                 ShadowTextField((newValue) {
                                   value.handleChange(
                                     'first_name',
                                     newValue,
                                   );
-                                }, title: 'First Name'),
+                                }, title: '** First Name'),
                                 ShadowTextField((newValue) {
                                   value.handleChange(
                                     'last_name',
@@ -121,36 +125,34 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                                     'email',
                                     newValue,
                                   );
-                                }, title: 'Email Address'),
+                                }, title: '** Email Address'),
                                 ShadowTextField((newValue) {
                                   value.handleChange(
                                     'password',
                                     newValue,
                                   );
-                                }, title: 'Password'),
+                                }, title: '** Password'),
                                 ShadowTextField((newValue) {
                                   value.handleChange(
                                     'confirm_password',
                                     newValue,
                                   );
-                                }, title: 'Confirm Passowrd'),
+                                }, title: '** Confirm Passowrd'),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Checkbox(
-                                      value: isChecked,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isChecked = value!;
-                                        });
+                                      value: value.isAgree,
+                                      onChanged: (newValue) {
+                                        value.setIsAgree(newValue!);
                                       },
                                     ),
                                     Flexible(
                                       child: RichText(
                                         text: TextSpan(
                                           text:
-                                              'By creating an account, you agree to our ',
+                                              '** By creating an account, you agree to our ',
                                           style: kTextStyle.copyWith(
                                             fontSize: 13.0,
                                           ),

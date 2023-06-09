@@ -240,4 +240,24 @@ class Booking {
     var response = await networkHelper.deleteData();
     return response;
   }
+
+  Future<Response> addBooking(Map<String, dynamic> data) async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'access_token');
+
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    NetworkHelper networkHelper = NetworkHelper(
+      endpoint: '/api/create-booking/',
+      header: header,
+      body: data,
+    );
+
+    var response = await networkHelper.postData();
+
+    return response;
+  }
 }

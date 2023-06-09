@@ -14,6 +14,7 @@ import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
 import 'package:psm_imam/view_models/parking_layout_view_model.dart';
 import 'package:psm_imam/view_models/parking_location_view_model.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
+import 'package:psm_imam/view_models/provider_registration_view_model.dart';
 import 'package:psm_imam/view_models/user_registration_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
@@ -64,8 +65,10 @@ class MyApp extends StatelessWidget {
               create: (context) => UserRegistrationViewModel(),
               child: const UserRegistrationScreen(),
             ),
-        ProviderRegistrationScreen.id: (context) =>
-            const ProviderRegistrationScreen(),
+        ProviderRegistrationScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ProviderRegistrationViewModel(),
+              child: const ProviderRegistrationScreen(),
+            ),
 
         // PARKING SPACE MANAGEMENT ROUTES
         AddParkingSpaceScreen.id: (context) => ChangeNotifierProvider(

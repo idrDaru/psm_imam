@@ -21,9 +21,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  Map<String, String> data = {};
-  String confirmPassword = '';
-
   @override
   void initState() {
     super.initState();
@@ -43,9 +40,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     // print("SAME PASSWORD: " + data.toString());
 
-    Response response =
-        await Provider.of<EditProfileViewModel>(context, listen: false)
-            .handleSubmitEditProfile(data);
+    Response response = await Provider.of<EditProfileViewModel>(
+      context,
+      listen: false,
+    ).handleSubmitEditProfile();
     var decodeResponse = jsonDecode(response.body);
     if (decodeResponse['status'] == 200) {
       // ignore: use_build_context_synchronously
@@ -96,21 +94,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 50.0,
-                                    backgroundImage: NetworkImage(
-                                      value.user.user.imageDownloadURL,
-                                    ),
-                                  ),
+                                  value.image != null
+                                      ? CircleAvatar(
+                                          radius: 50.0,
+                                          backgroundImage: FileImage(
+                                            value.image!,
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 50.0,
+                                          backgroundImage: NetworkImage(
+                                            value.user.user.imageDownloadURL,
+                                          ),
+                                        ),
                                   const SizedBox(height: 8.0),
                                   SubmitButton(
-                                      title: 'Change Photo', onPressed: () {}),
+                                    title: 'Change Photo',
+                                    onPressed: () {
+                                      value.handleImage();
+                                    },
+                                  ),
                                   const SizedBox(height: 50.0),
                                   ShadowTextField(
                                     (newValue) {
                                       value.user is ParkingUser
-                                          ? data['first_name'] = newValue
-                                          : data['name'] = newValue;
+                                          ? value.handleChange(
+                                              'first_name',
+                                              newValue,
+                                            )
+                                          : value.handleChange(
+                                              'name',
+                                              newValue,
+                                            );
+                                      // value.user is ParkingUser
+                                      //     ? data['first_name'] = newValue
+                                      //     : data['name'] = newValue;
                                     },
                                     title: value.user is ParkingUser
                                         ? value.user.firstName
@@ -120,58 +138,100 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   ),
                                   value.user is ParkingUser
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['last_name'] = newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'lastName',
+                                              newValue,
+                                            );
+                                            // data['last_name'] = newValue;
+                                          },
                                           title: value.user.lastName,
                                         )
                                       : Container(),
                                   value.user is ParkingProvider
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['address_line_one'] =
-                                                  newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'address_line_one',
+                                              newValue,
+                                            );
+                                            // data['address_line_one'] = newValue;
+                                          },
                                           title: value.user.addressLineOne,
                                         )
                                       : Container(),
                                   value.user is ParkingProvider
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['address_line_two'] =
-                                                  newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'address_line_two',
+                                              newValue,
+                                            );
+                                            // data['address_line_two'] = newValue;
+                                          },
                                           title: value.user.addressLineTwo,
                                         )
                                       : Container(),
                                   value.user is ParkingProvider
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['state_province'] = newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'state_province',
+                                              newValue,
+                                            );
+                                            // data['state_province'] = newValue;
+                                          },
                                           title: value.user.stateProvince,
                                         )
                                       : Container(),
                                   value.user is ParkingProvider
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['country'] = newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'country',
+                                              newValue,
+                                            );
+                                            // data['country'] = newValue;
+                                          },
                                           title: value.user.country,
                                         )
                                       : Container(),
                                   value.user is ParkingProvider
                                       ? ShadowTextField(
-                                          (newValue) =>
-                                              data['postal_code'] = newValue,
+                                          (newValue) {
+                                            value.handleChange(
+                                              'postal_code',
+                                              newValue,
+                                            );
+                                            // data['postal_code'] = newValue;
+                                          },
                                           title: value.user.postalCode,
                                         )
                                       : Container(),
                                   ShadowTextField(
-                                    (newValue) => data['email'] = newValue,
+                                    (newValue) {
+                                      value.handleChange(
+                                        'email',
+                                        newValue,
+                                      );
+                                      // data['email'] = newValue;
+                                    },
                                     title: value.user.user.email,
                                   ),
-                                  ShadowTextField(
-                                      (newValue) => data['password'] = newValue,
-                                      title: "************"),
-                                  ShadowTextField(
-                                      (newValue) => confirmPassword = newValue,
-                                      title: "************"),
+                                  ShadowTextField((newValue) {
+                                    value.handleChange(
+                                      'password',
+                                      newValue,
+                                    );
+                                    // data['password'] = newValue;
+                                  }, title: "************"),
+                                  ShadowTextField((newValue) {
+                                    value.handleChange(
+                                      'confirm_password',
+                                      newValue,
+                                    );
+                                    // confirmPassword = newValue;
+                                  }, title: "************"),
                                   const SizedBox(height: 20.0),
                                   SubmitButton(
                                     title: 'Save',

@@ -155,7 +155,20 @@ class _AddParkingSpaceScreenState extends State<AddParkingSpaceScreen> {
                                   style: kTextStyle,
                                 ),
                                 const SizedBox(height: 20.0),
-                                SubmitButton(title: 'Upload', onPressed: () {}),
+                                SubmitButton(
+                                  title: 'Upload',
+                                  onPressed: () {
+                                    value.handleImage();
+                                  },
+                                ),
+                                value.image != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 20.0,
+                                        ),
+                                        child: Image.file(value.image!),
+                                      )
+                                    : const SizedBox.shrink(),
                                 // const SizedBox(height: 20.0),
                                 // SubmitButton(title: 'Upload', onPressed: () {}),
                                 // const SizedBox(height: 20.0),

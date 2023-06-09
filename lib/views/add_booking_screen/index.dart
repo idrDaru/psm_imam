@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:psm_imam/components/constants.dart';
@@ -9,6 +11,7 @@ import 'package:psm_imam/components/time_drop_down.dart';
 import 'package:psm_imam/helpers/format_date.dart';
 import 'package:psm_imam/providers/time_provider.dart';
 import 'package:psm_imam/view_models/add_booking_view_model.dart';
+import 'package:psm_imam/views/manage_booking_screen/index.dart';
 import 'package:psm_imam/views/parking_layout_screen/index.dart';
 
 class AddBookingScreen extends StatefulWidget {
@@ -89,7 +92,13 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
       context,
       listen: false,
     ).selectedPosition.isNotEmpty) {
-      await addBookingViewModel.submitAddBooking(context, data);
+      var response = await addBookingViewModel.submitAddBooking(data);
+      var decodeReponse = jsonDecode(response.body);
+      if (decodeReponse['status'] == 201) {
+        Navigator.pushReplacementNamed(context, ManageBookingScreen.id);
+      } else {
+        print(decodeReponse['message']);
+      }
     }
 
     setState(() {
@@ -153,7 +162,7 @@ class _AddBookingScreenState extends State<AddBookingScreen> {
                                 ),
                                 const SizedBox(height: 20.0),
                                 Text(
-                                  '${value.parkingSpaceDetails!.addressLineOne}, ${value.parkingSpaceDetails!.addressLineTwo}, ${value.parkingSpaceDetails!.postalCode}, ${value.parkingSpaceDetails!.city}, ${value.parkingSpaceDetails!.stateProvince}, ${value.parkingSpaceDetails!.country}',
+                                  '${value.parkingSpaceDetails!.addressLineOne}, ${value.parkingSpaceDetails!.addressLineTwo == '' ? '' : '${value.parkingSpaceDetails!.addressLineTwo}, '}${value.parkingSpaceDetails!.postalCode} ${value.parkingSpaceDetails!.city}, ${value.parkingSpaceDetails!.stateProvince}, ${value.parkingSpaceDetails!.country}',
                                   style: kTextStyle,
                                   textAlign: TextAlign.center,
                                 ),
