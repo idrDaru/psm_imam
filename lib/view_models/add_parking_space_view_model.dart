@@ -6,7 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart';
 import 'package:psm_imam/helpers/image_handler.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
-import 'package:psm_imam/constants/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 
 class AddParkingSpaceViewModel extends ChangeNotifier {
   Map<String, dynamic> data = {

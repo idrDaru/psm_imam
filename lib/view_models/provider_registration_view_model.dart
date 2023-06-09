@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:psm_imam/constants/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/helpers/image_handler.dart';
 import 'package:psm_imam/services/networking.dart';
 

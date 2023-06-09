@@ -34,12 +34,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   handleSubmit() async {
-    // if (confirmPassword != data['password']) {
-    //   print("Password not same");
-    // }
-
-    // print("SAME PASSWORD: " + data.toString());
-
     Response response = await Provider.of<EditProfileViewModel>(
       context,
       listen: false,

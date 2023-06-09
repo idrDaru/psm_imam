@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:psm_imam/helpers/image_handler.dart';
 import 'package:psm_imam/services/networking.dart';
-import 'package:psm_imam/constants/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 
 class UserRegistrationViewModel extends ChangeNotifier {
   bool isLoading = false, isFormEmpty = false, isAgree = false;

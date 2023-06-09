@@ -71,8 +71,6 @@ class ParkingLayoutViewModel extends ChangeNotifier {
       }
       selectedPosition.add(data.id!);
     }
-    print(carCount);
-    print(motorcycleCount);
     notifyListeners();
   }
 
@@ -93,6 +91,9 @@ class ParkingLayoutViewModel extends ChangeNotifier {
 
     ParkingLayout parkingLayout = ParkingLayout();
     _parkingLayout = await parkingLayout.getParkingLayout(id);
+    _parkingLayout!.parkingSpot!.sort(
+      (a, b) => customSort(a.position!, b.position!),
+    );
     setCarCount(carCount);
     setMotorcycleCount(motorcycleCount);
     await setSelectedPotision(setSelectedPosition);
@@ -100,5 +101,17 @@ class ParkingLayoutViewModel extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  int customSort(String a, String b) {
+    int aParsed = int.parse(a);
+    int bParsed = int.parse(b);
+    if (aParsed < bParsed) {
+      return -1;
+    } else if (aParsed > bParsed) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 }

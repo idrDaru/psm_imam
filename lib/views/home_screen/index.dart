@@ -9,6 +9,7 @@ import 'package:psm_imam/components/custom_scaffold.dart';
 import 'package:psm_imam/components/loading.dart';
 import 'package:psm_imam/components/map.dart';
 import 'package:psm_imam/models/parking_spaces.dart';
+import 'package:psm_imam/models/parking_user.dart';
 import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/home_view_model.dart';
 import 'package:psm_imam/views/add_booking_screen/index.dart';
@@ -393,17 +394,23 @@ class ParkingSpaceDetail extends StatelessWidget {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        AddBookingScreen.id,
-                        arguments: value.parkingSpaceDetail!.id,
-                      );
+                  Consumer<UserProvider>(
+                    builder: (context, value2, child) {
+                      return value2.user is ParkingUser
+                          ? ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AddBookingScreen.id,
+                                  arguments: value.parkingSpaceDetail!.id,
+                                );
+                              },
+                              style: kSendButtonStyle,
+                              child: const Text("Order"),
+                            )
+                          : const SizedBox.shrink();
                     },
-                    style: kSendButtonStyle,
-                    child: const Text("Order"),
-                  ),
+                  )
                 ],
               );
             },

@@ -3,7 +3,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:psm_imam/components/submit_button.dart';
-import 'package:psm_imam/constants/constants.dart';
+import 'package:psm_imam/components/constants.dart';
 
 class ImageHandler {
   UploadTask? _uploadTask;

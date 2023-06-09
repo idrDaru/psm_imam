@@ -135,3 +135,143 @@ List<String> minutes = [
   '58',
   '59',
 ];
+
+final List<Map<String, dynamic>> staticParkingSpot = [
+  {
+    'type': 1,
+    'status': true,
+    'position': '1',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '2',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '3',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '4',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '5',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '6',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '7',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '8',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '9',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '10',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '11',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '12',
+  },
+  {
+    'type': 1,
+    'status': true,
+    'position': '3',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '1',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '2',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '3',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '4',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '5',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '6',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '7',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '8',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '9',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '10',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '11',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '12',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '13',
+  },
+  {
+    'type': 2,
+    'status': true,
+    'position': '14',
+  },
+];
+
+const profileFilePath = 'profile_image/';
