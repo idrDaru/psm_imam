@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
+import 'package:psm_imam/models/booking.dart';
 import 'package:psm_imam/models/parking_layout.dart';
 import 'package:psm_imam/models/parking_location.dart';
 import 'package:psm_imam/models/parking_spot.dart';
@@ -21,6 +22,7 @@ class ParkingSpace {
   bool? isActive;
   ParkingLayout? parkingLayout;
   ParkingLocation? parkingLocation;
+  List<Booking>? booking;
 
   ParkingSpace({
     this.id,
@@ -36,6 +38,7 @@ class ParkingSpace {
     this.isActive,
     this.parkingLayout,
     this.parkingLocation,
+    this.booking,
   });
 
   Future<List<ParkingSpace>> getAllParkingSpace() async {
@@ -193,6 +196,33 @@ class ParkingSpace {
       });
     });
 
+    List<Booking> bookings = [];
+    data['booking_set'].forEach(
+      (value) {
+        List<String> bookingParkingPosition = [];
+        value['parking_spot'].forEach(
+          (value) {
+            bookingParkingPosition.add(value);
+          },
+        );
+
+        bookings.add(
+          Booking(
+            id: value['id'],
+            isPurchased: value['is_purchased'],
+            timeFrom: DateTime.parse(value['time_from']),
+            timeTo: DateTime.parse(value['time_to']),
+            totalCar: value['total_car'],
+            totalMotorcycle: value['total_motorcycle'],
+            totalPrice: value['total_price'],
+            isActive: value['is_active'],
+            isExpired: value['is_expired'],
+            parkingPosition: bookingParkingPosition,
+          ),
+        );
+      },
+    );
+
     ParkingSpace parkingSpace = ParkingSpace(
       id: data['id'],
       name: data['name'],
@@ -220,6 +250,7 @@ class ParkingSpace {
         latitude: data['parkinglocation_set'][0]['latitude'],
         longitude: data['parkinglocation_set'][0]['longitude'],
       ),
+      booking: bookings,
     );
 
     return parkingSpace;

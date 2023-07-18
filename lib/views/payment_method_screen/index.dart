@@ -238,15 +238,15 @@ class PaymentMethodScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50.0),
-                Center(
-                  child: SubmitButton(
-                    title: 'Add Payment Method',
-                    onPressed: () {
-                      Navigator.pushNamed(context, PaymentFormScreen.id);
-                    },
-                  ),
-                ),
+                // const SizedBox(height: 50.0),
+                // Center(
+                //   child: SubmitButton(
+                //     title: 'Add Payment Method',
+                //     onPressed: () {
+                //       Navigator.pushNamed(context, PaymentFormScreen.id);
+                //     },
+                //   ),
+                // ),
               ],
             ),
           ),

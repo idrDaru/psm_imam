@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:psm_imam/components/constants.dart';
 import 'package:psm_imam/components/submit_button.dart';
+import 'package:psm_imam/helpers/format_date.dart';
 import 'package:psm_imam/views/mock_external_payment_screen.index.dart';
 
 class PaymentScreen extends StatelessWidget {
@@ -10,6 +11,7 @@ class PaymentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     dynamic args = ModalRoute.of(context)!.settings.arguments;
+    FormatDate formatDate = FormatDate();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -71,15 +73,7 @@ class PaymentScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            'Time From: ${args.timeFrom.toString()}',
-                            style: kTextStyle.copyWith(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Text(
-                            'Time To: ${args.timeTo.toString()}',
+                            'Booking Time: ${formatDate.displayDateTime(args.timeFrom, args.timeTo)}',
                             style: kTextStyle.copyWith(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w500,

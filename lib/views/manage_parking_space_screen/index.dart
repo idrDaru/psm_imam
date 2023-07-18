@@ -12,6 +12,7 @@ import 'package:psm_imam/providers/user_provider.dart';
 import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
 import 'package:psm_imam/views/add_parking_space_screen/index.dart';
 import 'package:psm_imam/views/edit_parking_space_screen/index.dart';
+import 'package:psm_imam/views/parking_space_summary_screen/index.dart';
 
 class ManageParkingSpaceScreen extends StatefulWidget {
   static String id = 'manage_parking_space _screen';
@@ -233,6 +234,31 @@ class _ManageParkingSpaceScreenState extends State<ManageParkingSpaceScreen> {
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
+                                    ),
+                                    Consumer<ManageParkingSpaceViewModel>(
+                                      builder: (context, value, child) {
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              ParkingSpaceSummaryScreen.id,
+                                              arguments:
+                                                  value.parkingSpace![index].id,
+                                            );
+                                          },
+                                          child: Text(
+                                            'Summary',
+                                            style: kTextStyle.copyWith(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          style: const ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStatePropertyAll<Color>(
+                                                    kSecondaryColor),
+                                          ),
+                                        );
+                                      },
                                     ),
                                     Consumer<ManageParkingSpaceViewModel>(
                                       builder: (context, value, child) {

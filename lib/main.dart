@@ -13,6 +13,7 @@ import 'package:psm_imam/view_models/manage_booking_view_model.dart';
 import 'package:psm_imam/view_models/manage_parking_space_view_model.dart';
 import 'package:psm_imam/view_models/parking_layout_view_model.dart';
 import 'package:psm_imam/view_models/parking_location_view_model.dart';
+import 'package:psm_imam/view_models/parking_space_summary_view_model.dart';
 import 'package:psm_imam/view_models/profile_view_model.dart';
 import 'package:psm_imam/view_models/provider_registration_view_model.dart';
 import 'package:psm_imam/view_models/user_registration_view_model.dart';
@@ -35,6 +36,7 @@ import 'package:psm_imam/views/profile_screen/index.dart';
 import 'package:psm_imam/views/registrations_screen/provider_registration_screen.dart';
 import 'package:psm_imam/views/registrations_screen/user_registration_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:psm_imam/views/parking_space_summary_screen/index.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,6 +99,10 @@ class MyApp extends StatelessWidget {
         ParkingLocationScreen.id: (context) => ChangeNotifierProvider(
               create: (context) => ParkingLocationViewModel(),
               child: const ParkingLocationScreen(),
+            ),
+        ParkingSpaceSummaryScreen.id: (context) => ChangeNotifierProvider(
+              create: (context) => ParkingSpaceSummaryViewModel(),
+              child: const ParkingSpaceSummaryScreen(),
             ),
 
         // ACCOUNT MANAGEMENT ROUTES

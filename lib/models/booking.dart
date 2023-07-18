@@ -15,6 +15,7 @@ class Booking {
   DateTime? timeFrom, timeTo;
   ParkingSpace? parkingSpace;
   List<String>? parkingPosition;
+  bool? isActive, isExpired;
 
   Booking({
     this.id,
@@ -26,6 +27,8 @@ class Booking {
     this.totalMotorcycle,
     this.totalPrice,
     this.parkingPosition,
+    this.isActive,
+    this.isExpired,
   });
 
   Future<List<Booking>> getUserBooking() async {
@@ -113,6 +116,8 @@ class Booking {
             totalMotorcycle: value['total_motorcycle'],
             totalPrice: value['total_price'],
             parkingPosition: parkingPosition,
+            isActive: value['is_active'],
+            isExpired: value['is_expired'],
           ),
         );
       },
@@ -199,6 +204,8 @@ class Booking {
       totalMotorcycle: data['total_motorcycle'],
       totalPrice: data['total_price'],
       parkingPosition: parkingPos,
+      isActive: data['is_active'],
+      isExpired: data['is_expired'],
     );
 
     return booking;

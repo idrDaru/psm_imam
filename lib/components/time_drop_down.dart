@@ -69,7 +69,7 @@ class TimeDropdown extends StatelessWidget {
                       value: type == 'from'
                           ? value.from['minute']
                           : value.to['minute'],
-                      items: value.hoursDropdownMenu(),
+                      items: value.minutesDropdownMenu(),
                       onChanged: (newValue) {
                         type == 'from'
                             ? Provider.of<TimeProvider>(context, listen: false)

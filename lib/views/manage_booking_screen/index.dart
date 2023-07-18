@@ -253,6 +253,13 @@ class _ManageBookingScreenState extends State<ManageBookingScreen> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
+                                                    'Status : ${bookingList![index].isExpired! ? 'Expired' : bookingList![index].isPurchased! ? bookingList![index].isActive! ? 'Active' : 'Not Active' : 'Wait for Payment'}',
+                                                    style: kTextStyle.copyWith(
+                                                      fontSize: 11.0,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 5.0),
+                                                  Text(
                                                     'Car Space : ${bookingList![index].totalCar.toString()}',
                                                     style: kTextStyle.copyWith(
                                                       fontSize: 11.0,
